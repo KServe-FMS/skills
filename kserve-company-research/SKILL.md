@@ -13,6 +13,10 @@ description: >
 
 This skill produces a comprehensive BD intelligence report on a prospect company so KServe's business development team can reach out to the right people with the right message. The output is a structured chat summary with verified sources for every data point.
 
+**Compatible with:** Claude.ai · Claude Code · Cowork · OpenCode · Codex · Any AI agent platform
+
+---
+
 ## About KServe
 
 KServe is an AI-powered BPO company based in Thane, Maharashtra, India. Services offered:
@@ -27,9 +31,40 @@ Target industries: BFSI, eCommerce, Education/EdTech, Automobile, Energy & Utili
 
 ---
 
+## Platform Execution Mode
+
+Before starting research, detect which execution mode is available and follow it throughout:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                   DETECT EXECUTION MODE                         │
+│                                                                 │
+│  Can you spawn subagents / parallel tool calls?                 │
+│  (Task tool, spawn_agent, parallel workers, or equivalent)      │
+│                                                                 │
+│  YES → PARALLEL MODE    │   NO → SEQUENTIAL MODE               │
+│  (Claude Code, OpenCode,│   (Claude.ai, Cowork, Codex chat,    │
+│   Codex agent, any      │    any single-thread assistant)       │
+│   multi-agent platform) │                                       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**PARALLEL MODE:** After user confirms the company, spawn Workers 2–15 all at once. Each Worker runs its own Checker loop. The Orchestrator assembles the final report once all workers complete.
+
+**SEQUENTIAL MODE:** After user confirms, run Steps 2–15 one by one. Apply the Worker → Checker validation inline at each step before moving to the next. Present the assembled report at the end.
+
+**Tool naming across platforms:**
+- Web search: use whatever is available — `web_search`, `WebSearch`, `search`, `browse`, or equivalent
+- File write: use `write_file`, `Write`, `fs.write`, or equivalent if the user asks for a saved report
+- Subagents: use `Task`, `spawn_agent`, `create_agent`, or the platform's equivalent parallel worker tool
+
+The research logic and output format are identical regardless of platform or execution mode.
+
+---
+
 ## Research Flow
 
-### Phase 1 — Verification (always first)
+### Phase 1 — Verification (always first, on every platform)
 
 Search the web for the company. Present the user with:
 - Company name (as found)
@@ -55,13 +90,16 @@ Please confirm and I'll run the full research.
 
 ### Phase 2 — Full Research (after user confirms)
 
-Once confirmed, run all 14 research steps. In Claude Code (with subagents), spawn all 14 worker agents simultaneously for maximum speed. On Claude.ai, run them sequentially in order.
+Once confirmed, run all 14 research steps (Steps 2–15) using the execution mode detected above.
 
-Each step follows the **Worker → Checker → Main** pattern:
-1. **Worker Agent** gathers data for that specific step
-2. **Checker Agent** reviews the output — checks for accuracy, source quality, and freshness. If anything is wrong or unsourced, it sends back to the Worker with specific feedback
+Each step follows the **Worker → Checker → Orchestrator** pattern:
+1. **Worker** gathers data for that specific step using available web/search tools
+2. **Checker** reviews the output — checks for accuracy, source quality, and freshness. If anything is wrong or unsourced, it returns to the Worker with specific feedback
 3. This loop repeats until Checker approves
-4. Approved output is handed to the **Main/Orchestrator Agent** which assembles the final report
+4. Approved output is passed to the **Orchestrator** which assembles the final report
+
+In PARALLEL MODE, all Workers run simultaneously; the Orchestrator waits for all to complete.
+In SEQUENTIAL MODE, each step's Worker → Checker loop completes before the next step begins.
 
 ---
 
@@ -324,17 +362,19 @@ Potential objections: ...
 
 **Every data point needs a source:** Never present a fact without a URL or document reference. If something cannot be sourced, say "Not publicly available" rather than guessing.
 
-**Worker → Checker loop:** The Checker agent should ask: Is the data accurate? Is the source credible? Is it recent? Is it clearly attributed? Only approve when all four are yes.
+**Worker → Checker loop:** The Checker should ask: Is the data accurate? Is the source credible? Is it recent? Is it clearly attributed? Only approve when all four are yes.
 
 **MCA is ground truth for Indian companies:** For incorporation date, directors, registered address, and financial filings — MCA (mca.gov.in) is the most authoritative source. Tofler, Zauba Corp, and similar aggregators pull from MCA and are acceptable secondary sources.
 
 **BD framing throughout:** Every section should be written with the lens of "how does this help KServe win this account?" — not just raw data but insight.
 
+**Graceful degradation:** If a tool or data source is unavailable on the current platform (e.g., a site is blocked, a tool doesn't exist), note it clearly in that section and move on. Never halt the entire report because one step hit a wall.
+
 ---
 
-## Multi-Agent Architecture (Claude Code)
+## Multi-Agent Architecture
 
-When running in Claude Code with subagents enabled:
+### PARALLEL MODE (Claude Code · OpenCode · Codex agent · any subagent-capable platform)
 
 ```
 User confirms company (Step 1)
@@ -346,31 +386,57 @@ User confirms company (Step 1)
 │  Worker-5   Worker-6   Worker-7  ...    │
 │  Worker-8   Worker-9   Worker-10 ...    │
 │  Worker-11  Worker-12  Worker-13 ...    │
-│  Worker-14  Worker-15               │
+│  Worker-14  Worker-15                  │
 └─────────────────────────────────────────┘
          │ (each worker ↔ checker loop)
          ▼
 ┌─────────────────────────────────────────┐
-│         CHECKER AGENT (shared)          │
+│         CHECKER (per worker)            │
 │  Validates: accuracy, source, recency   │
 │  Returns to worker if any fail          │
 └─────────────────────────────────────────┘
          │ (all approved outputs)
          ▼
 ┌─────────────────────────────────────────┐
-│         MAIN / ORCHESTRATOR AGENT       │
+│         ORCHESTRATOR AGENT              │
 │  Combines all 14 approved sections      │
 │  Renders final BD Research Report       │
 └─────────────────────────────────────────┘
 ```
 
-On Claude.ai (no subagents): Run steps 2–15 sequentially with the same Worker → Checker logic applied inline for each step before moving to the next.
+Use the platform's native subagent/parallel tool:
+- **Claude Code / OpenCode:** `Task` tool
+- **Codex:** `spawn_agent` or equivalent
+- **Other platforms:** use whatever parallel worker primitive is available
+
+### SEQUENTIAL MODE (Claude.ai · Cowork · any single-thread chat interface)
+
+```
+User confirms company (Step 1)
+         │
+    ┌────▼────┐
+    │ Step 2  │ Worker gathers → Checker validates → approved ✓
+    └────┬────┘
+    ┌────▼────┐
+    │ Step 3  │ Worker gathers → Checker validates → approved ✓
+    └────┬────┘
+        ...
+    ┌────▼─────┐
+    │ Step 15  │ Worker gathers → Checker validates → approved ✓
+    └────┬─────┘
+         │
+         ▼
+  Orchestrator assembles
+  and presents final report
+```
+
+Run Steps 2–15 in order. Apply the Worker → Checker validation inline before advancing. Present the complete assembled report only after all 14 steps are done.
 
 ---
 
-## Checker Agent Instructions
+## Checker Instructions
 
-When acting as the Checker for any research step, evaluate the Worker's output against these criteria:
+When acting as the Checker for any research step, evaluate the Worker's output against these five criteria:
 
 1. **Source present?** Every fact must have a URL or named document. No source = send back.
 2. **Source credible?** Prefer official sources (MCA, company website, major publications) over anonymous forums or low-quality aggregators.
@@ -378,6 +444,7 @@ When acting as the Checker for any research step, evaluate the Worker's output a
 4. **Accurate?** Does the data make internal sense? (e.g., a 2-year-old company can't have 50 years of history)
 5. **Complete?** Did the Worker answer everything the step requires, or are there gaps?
 
-If any criterion fails, return to Worker with specific actionable feedback: *"The turnover figure has no source — please find the MCA filing or a news article citing the exact revenue."*
+If any criterion fails, return to Worker with specific actionable feedback:
+*"The turnover figure has no source — please find the MCA filing or a news article citing the exact revenue."*
 
 Only approve when all five criteria are met.
