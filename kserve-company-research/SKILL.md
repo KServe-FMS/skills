@@ -19,15 +19,26 @@ This skill produces a comprehensive BD intelligence report on a prospect company
 
 ## About KServe
 
-KServe is an AI-powered BPO company based in Thane, Maharashtra, India. Services offered:
-- Customer Experience Management (multi-channel, multilingual)
-- Lead Generation & Qualification
-- Back Office Processing & Research
-- Finance & Accounting Outsourcing
-- Digital Transformation
-- Robotic Process Automation (RPA)
+KServe is an AI-powered Business Process Outsourcing (BPO) company headquartered in Thane, Maharashtra, India. KServe helps businesses grow and operate more efficiently by taking over key business functions — powered by integrated AI technology that delivers faster turnaround, higher accuracy, and better outcomes than traditional BPO.
 
-Target industries: BFSI, eCommerce, Education/EdTech, Automobile, Energy & Utilities, Healthcare, Media & Entertainment, Real Estate, Retail, Manufacturing.
+### Services
+
+| Service | What KServe does |
+|---|---|
+| **Lead Generation** | Identifies and sources potential customers for the client's sales pipeline |
+| **Lead Qualification** | Evaluates leads to determine fit, intent, and readiness to buy — so the client's sales team focuses only on high-value prospects |
+| **Customer Onboarding** | Manages the end-to-end process of welcoming and activating new customers on behalf of the client |
+| **Staff Augmentation** | Provides trained, dedicated staff who work as an extension of the client's own team — without the overhead of in-house hiring |
+| **Customer Service** | Handles inbound and outbound customer interactions across voice, chat, email, and other channels |
+| **Back-Office Operations** | Takes over internal processing tasks — data entry, documentation, verification, and admin workflows |
+| **Collection** | Manages payment follow-ups, outstanding dues, and recovery processes on behalf of the client |
+| **Market Research** | Gathers competitive intelligence, customer insights, and market data to support the client's business decisions |
+
+> All services can be augmented with KServe's AI technology — enabling automation, smarter routing, predictive insights, and higher throughput at lower cost.
+
+### Target Industries
+
+BFSI · NBFC · Banking & Securities · Insurance · eCommerce · Education / EdTech · Automobile · Energy & Utilities · Healthcare · Media & Entertainment · Real Estate · Retail · Manufacturing · Tours & Travel · Hospitality · Agriculture · Immigration · Accounting · Fintech · Food & Beverages · Supply Chain Management · Logistics
 
 ---
 
