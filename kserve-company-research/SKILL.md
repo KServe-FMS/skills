@@ -44,32 +44,23 @@ BFSI · NBFC · Banking & Securities · Insurance · eCommerce · Education / Ed
 
 ## Platform Execution Mode
 
-Before starting research, detect which execution mode is available and follow it throughout:
+Detect your execution mode before starting. Apply it consistently throughout.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                   DETECT EXECUTION MODE                         │
-│                                                                 │
-│  Can you spawn subagents / parallel tool calls?                 │
-│  (Task tool, spawn_agent, parallel workers, or equivalent)      │
-│                                                                 │
-│  YES → PARALLEL MODE    │   NO → SEQUENTIAL MODE               │
-│  (Claude Code, OpenCode,│   (Claude.ai, Cowork, Codex chat,    │
-│   Codex agent, any      │    any single-thread assistant)       │
-│   multi-agent platform) │                                       │
-└─────────────────────────────────────────────────────────────────┘
-```
+| Mode | When to use | Platforms |
+|---|---|---|
+| **PARALLEL** | You can spawn independent subagents that run simultaneously | Claude Code (`Task` tool) · OpenCode (`Task`) · Codex agent (`spawn_agent`) · Any multi-agent platform |
+| **SEQUENTIAL** | Single-thread only — one step at a time | Claude.ai · Cowork · Codex chat · Any single-thread assistant |
 
-**PARALLEL MODE:** After user confirms the company, spawn Workers 2–15 all at once. Each Worker runs its own Checker loop. The Orchestrator assembles the final report once all workers complete.
+If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 
-**SEQUENTIAL MODE:** After user confirms, run Steps 2–15 one by one. Apply the Worker → Checker validation inline at each step before moving to the next. Present the assembled report at the end.
+**PARALLEL:** Spawn Workers 2–15 all at once after user confirms. Each Worker runs its own Checker loop. Orchestrator assembles the report once all Workers complete. Note: Step 10 (KServe Fit) depends on Steps 2–9 — spawn it last.
 
-**Tool naming across platforms:**
-- Web search: use whatever is available — `web_search`, `WebSearch`, `search`, `browse`, or equivalent
-- File write: use `write_file`, `Write`, `fs.write`, or equivalent if the user asks for a saved report
-- Subagents: use `Task`, `spawn_agent`, `create_agent`, or the platform's equivalent parallel worker tool
+**SEQUENTIAL:** Run Steps 2–15 in order. Complete each Worker → Checker loop before advancing. Assemble and present the full report after Step 15.
 
-The research logic and output format are identical regardless of platform or execution mode.
+Tool naming across platforms:
+- Web search: `web_search`, `WebSearch`, `search`, `browse`, or equivalent
+- File write: `write_file`, `Write`, `fs.write`, or equivalent
+- Subagents: `Task`, `spawn_agent`, `create_agent`, or platform equivalent
 
 ---
 
@@ -83,221 +74,248 @@ Search the web for the company. Present the user with:
 - Registered / primary address
 - Brief one-line description
 
-Then **stop and wait for the user to confirm** this is the right company before proceeding. If the user provided a website or address alongside the company name, use that to narrow the search.
+**Stop and wait for the user to confirm** this is the right company before proceeding. If the user provided a website or address, use it to narrow the search.
 
-Example verification message:
+Example:
 ```
 I found the following. Is this the company you mean?
 
 **Name:** Reliance Retail Ltd.
 **Website:** https://www.relianceretail.com
-**Address:** 3rd Floor, Court House, Lokmanya Bal Gangadhar Tilak Marg, Dhobi Talao, Mumbai – 400002
-**About:** India's largest retail chain operating across grocery, fashion, electronics and more.
+**Address:** 3rd Floor, Court House, Lokmanya Bal Gangadhar Tilak Marg, Mumbai – 400002
+**About:** India's largest retail chain across grocery, fashion, and electronics.
 
 Please confirm and I'll run the full research.
 ```
 
----
-
 ### Phase 2 — Full Research (after user confirms)
 
-Once confirmed, run all 14 research steps (Steps 2–15) using the execution mode detected above.
+Run all 14 research steps (Steps 2–15) using the execution mode detected above. Each step follows the **Worker → Checker → Orchestrator** pattern:
 
-Each step follows the **Worker → Checker → Orchestrator** pattern:
-1. **Worker** gathers data for that specific step using available web/search tools
-2. **Checker** reviews the output — checks for accuracy, source quality, and freshness. If anything is wrong or unsourced, it returns to the Worker with specific feedback
-3. This loop repeats until Checker approves
-4. Approved output is passed to the **Orchestrator** which assembles the final report
+1. **Worker** gathers data for that step using available web/search tools
+2. **Checker** validates the output against the five criteria (see Checker Instructions)
+3. If anything fails, Checker returns specific feedback to Worker — loop repeats
+4. Once approved, output passes to the **Orchestrator**
+5. **Orchestrator** assembles the final report once all steps are complete
 
-In PARALLEL MODE, all Workers run simultaneously; the Orchestrator waits for all to complete.
-In SEQUENTIAL MODE, each step's Worker → Checker loop completes before the next step begins.
+---
+
+## Core Research Principles
+
+These principles apply to every step and every platform. Read them before executing any step.
+
+**Recency first.** Prioritize sources from the last 12 months. If only older data is available, use it but note in report: `⚠️ Most recent available: [FY/date]. Newer data may not yet be public.`
+
+**Every data point needs a source.** Never present a fact without a URL or document reference. If something cannot be sourced, write "Not publicly available" — do not guess.
+
+**MCA is ground truth for Indian companies.** For these fields, always use MCA (mca.gov.in) as the primary source:
+- Incorporation date (Step 5)
+- Current directors (Step 6)
+- Registered address (Step 4)
+- Financial filings / turnover (Step 3)
+
+Tofler, Zauba Corp, and similar aggregators pull from MCA and are acceptable secondary sources.
+
+**BD framing throughout.** Every section must be written with the lens of: *"How does this help KServe win this account?"* — not raw data, but insight.
+
+**Graceful degradation.** If a tool or data source is unavailable, note it clearly in that section and move on. Never halt the entire report because one step hit a wall.
+
+---
+
+## Source Priority Reference
+
+Use this table for every step. Each step lists which sources to try in order of preference.
+
+| Step | Primary | Secondary | Fallback |
+|---|---|---|---|
+| 2 — Line of Business | Company website (About page) | LinkedIn company page | News articles · Industry directories |
+| 3 — Turnover | MCA filings (AOC-4 Annual Return, MGT-7 Board Report) | Tofler · Zauba Corp | News articles · Annual reports |
+| 4 — Head Office | MCA registered address | Company website | Google Maps Business listing |
+| 5 — Years in Existence | MCA company master data | Company website (Our Story / About) | LinkedIn Founded year · Wikipedia |
+| 6 — Directors | MCA director listing | Tofler | Company website (Leadership) · LinkedIn |
+| 7 — Branches | Company website | Google Maps | News · LinkedIn (employees by location) |
+| 8 — Reviews | Google Business · Glassdoor · AmbitionBox (see step for industry table) | Trustpilot · Justdial · IndiaMart | App Store / Play Store reviews |
+| 9 — Rating | Synthesized from Step 8 output | — | — |
+| 10 — KServe Fit | Synthesized from Steps 2–9 output | — | — |
+| 11 — Customer Care | Company website | Google Business · Justdial | App Store / Play Store listing |
+| 12 — Social Media | Direct platform search (LinkedIn, Instagram, Facebook, X, YouTube) | Social Blade (trends) | Company website social links |
+| 13 — Tracxn | Tracxn.com | Crunchbase (fallback if Tracxn locked) | — |
+| 14 — M&A | News (last 12 months) | Tracxn · Crunchbase · MCA filings | ET · Mint · Business Standard |
+| 15 — BD Briefing | Synthesized from Steps 2–14 output — no new searches | — | — |
 
 ---
 
 ## Research Steps (Steps 2–15)
 
 ### Step 2 — Line of Business
-Find what the company actually does: their industry, core products or services, business model (B2B/B2C/B2G), and key customer segments. Go beyond their homepage — look for their "About" page, news coverage, and LinkedIn company description for a grounded picture.
 
-**Source priority:** Company website → LinkedIn → News articles → Industry directories
+Find: industry, core products/services, business model (B2B / B2C / B2G), key customer segments.
 
 ---
 
 ### Step 3 — Turnover (₹ Crores)
-Find annual revenue / turnover in Indian Rupees (Crores). For Indian companies, pull from:
-1. **MCA (Ministry of Corporate Affairs)** — search https://www.mca.gov.in for the company's annual filings (AOC-4, MGT-7)
-2. **Tofler / Zauba Corp / Tracxn** — aggregators of MCA data
-3. News articles, annual reports, press releases
 
-Always state the financial year the turnover refers to (e.g., FY2023-24). If only older data is available, flag it clearly: *"Latest available: FY2022-23 — more recent filings not yet public."*
+Find annual revenue/turnover in Indian Rupees (Crores). Always include the financial year (e.g., FY2023-24).
+
+For Indian-registered companies: use MCA annual filings → Tofler/Zauba → news.
+For non-Indian companies or Indian subsidiaries of foreign entities: report in original currency, convert to INR at filing-date exchange rate, and note in report: `Revenue in [currency]; converted to INR at [rate] as of [date].`
+If not publicly available: write "Private company — turnover not publicly disclosed."
 
 ---
 
 ### Step 4 — Head Office Location
-Find the primary / registered office address. Cross-reference the company website with MCA registered address (they sometimes differ). Note both if different.
 
-**Source priority:** MCA registered address → Company website → Google Maps Business listing
+Find the primary registered office address. Cross-reference MCA registered address against company website — they sometimes differ. If different, report both: `Registered (MCA): [address] | Current operations (website): [address]`
 
 ---
 
 ### Step 5 — Years in Existence
-Find the incorporation / founding year. Calculate age from today. For Indian companies, MCA shows the Date of Incorporation on the company master data page.
 
-**Source priority:** MCA company master data → Company website "Our Story" / "About" → LinkedIn Founded year → News/Wikipedia
+Find the incorporation / founding year. Calculate age from today.
 
 ---
 
 ### Step 6 — Directors
-Pull the names and designations of current directors from MCA. Include:
-- Full name
-- Designation (Managing Director, Director, Independent Director etc.)
-- DIN (Director Identification Number) if available — useful for cross-referencing
 
-For BD purposes, flag which directors are likely decision-makers for outsourcing (e.g., COO, CFO, MD, VP Operations).
+Pull current directors from MCA. For each: Full name · Designation (MD, Director, Independent Director, etc.) · DIN (Director Identification Number).
 
-**Source priority:** MCA → Tofler → Company website Leadership page → LinkedIn
+For BD outreach, identify for BD outreach: directors likely to be decision-makers for outsourcing (MD, COO, CFO, VP Operations).
 
 ---
 
 ### Step 7 — Branches & Offices
-Find the number of offices, branches, warehouses, or locations. Include:
-- Total count
-- Key cities / states
-- Any international presence
 
-This matters for KServe because multi-location companies often have distributed customer operations that benefit from centralized BPO support.
-
-**Source priority:** Company website → Google Maps → News → LinkedIn (employees by location filter)
+Find: total number of offices/branches/locations · key cities/states · any international presence.
 
 ---
 
-### Step 8 — Reviews & Reputation (last 1 year)
-Search for reviews across all relevant platforms from the **last 12 months**. Choose platforms based on their industry:
+### Step 8 — Reviews & Reputation (Last 12 Months)
+
+Search for reviews from the **last 12 months** on platforms relevant to the company type:
 
 | Company type | Platforms to check |
 |---|---|
-| Consumer brand / eCommerce | Google Business, Trustpilot, Flipkart, Amazon, Myntra |
-| Employer brand | AmbitionBox, Glassdoor, Indeed |
-| B2B / General | Google Business, Justdial, IndiaMart |
-| Finance / Insurance | Google Business, consumer forums |
+| Consumer brand / eCommerce | Google Business · Trustpilot · Flipkart · Amazon · Myntra |
+| Employer brand | AmbitionBox · Glassdoor · Indeed |
+| B2B / General | Google Business · Justdial · IndiaMart |
+| Finance / Insurance | Google Business · consumer forums |
 
 Synthesize into:
-- **Top 5 Positives** — recurring themes in good reviews
-- **Top 5 Negatives** — recurring pain points (these are BD opportunities for KServe!)
-- **Platforms checked** with number of reviews found and date range
+- **Top 5 Positives** — recurring themes across multiple reviews (note frequency)
+- **Top 5 Negatives** — recurring pain points (these are BD opportunities for KServe)
+- **Platforms checked** — list each with review count and date range
 
-Always cite source URLs. If less than 12 months of reviews exist, include older reviews and flag it.
+If less than 12 months of reviews exist, include older reviews and note in report: `⚠️ Full 12-month data unavailable; includes reviews from [date range].`
 
 ---
 
 ### Step 9 — Overall Business Rating (out of 10)
-Based on the review data from Step 8, assign an overall business health / reputation score out of 10. This is a synthesized judgment, not an average of star ratings.
 
-Consider:
-- Consistency of complaints vs. praise
-- Severity of negative themes (e.g., "slow delivery" vs. "never received order")
-- Volume of reviews and recency
-- Response rate of the company to reviews
+Assign a synthesized reputation score — NOT an average of star ratings. Base it on the review themes from Step 8.
 
-Provide a **brief rationale** (2–3 sentences) explaining the score. This score is KServe's internal signal — a lower score often means more BPO opportunity.
+**Rating anchors:**
+
+| Score | Label | Criteria |
+|---|---|---|
+| 9–10 | Excellent | Few complaints, strong positive trends, company actively responds to feedback |
+| 7–8 | Good | Mostly positive, some recurring but minor issues |
+| 5–6 | Fair | Mixed reviews, notable pain points alongside positives |
+| 3–4 | Poor | Majority negative, serious issues (e.g., unfulfilled orders, unresolved complaints), low responsiveness |
+| 1–2 | Very Poor | Severe, consistent failures across multiple platforms |
+
+Provide a 2–3 sentence rationale. Note: a lower score often signals more BPO opportunity for KServe.
 
 ---
 
 ### Step 10 — KServe Services Fit
-Based on everything gathered so far (industry, size, reviews, operations), recommend which KServe services would be most relevant to this prospect and why.
 
-Frame this as a BD pitch rationale — not just a list, but a reason:
+**Depends on:** Steps 2–9 (LoB, size, reviews, directors). In PARALLEL mode, run this step last — after all other workers complete.
 
-Example format:
+Based on the full research picture, recommend **3–5 services** (not all 8) with explicit fit levels:
+
+- ⭐ **HIGH FIT** — service directly addresses a visible pain point found in reviews or news
+- ✅ **MEDIUM FIT** — service aligns with company strategy, size, or industry norms
+
+Omit LOW FIT services entirely — only include what is genuinely relevant.
+
+Format each as: `[Service] — [Fit level] — [Specific evidence from research]`
+
+Example:
 ```
-**Customer Experience Management** ⭐ High fit
-Their Glassdoor reviews mention high call volumes and long wait times — a strong signal
-that their in-house customer support is stretched. KServe's CX management with AI-first
-tools could directly address this.
+Customer Service ⭐ HIGH FIT
+Glassdoor reviews cite "2-hour wait times" and "unresponsive support" — a direct signal
+that in-house customer ops are stretched. KServe's AI-powered CX management addresses this.
 
-**Lead Qualification** ✅ Medium fit
-They're expanding into 3 new cities (per recent news). A qualified outbound lead gen
-team could accelerate market entry.
+Lead Generation ✅ MEDIUM FIT
+Company is expanding into 3 new cities (per recent news). Qualified outbound lead gen
+could accelerate market entry without growing headcount.
 ```
 
 ---
 
 ### Step 11 — Customer Care Number
-Find their publicly listed customer support / helpline number. This is useful to:
-- Understand how they currently handle customer service
-- Use as a conversation opener ("We noticed your current support line...")
 
-**Source priority:** Company website → Google Business listing → Justdial → App Store / Play Store listing
+Find their publicly listed customer support / helpline number.
+
+BD insight: presence of a published number signals a formal support structure. Absence may indicate underdeveloped customer ops — a potential KServe entry point. If no number is found, note in report: "No published support number found."
 
 ---
 
 ### Step 12 — Social Media Followers
-Pull current follower counts across major platforms:
-- LinkedIn (most important for B2B)
-- Instagram
-- Facebook
-- Twitter / X
-- YouTube (if applicable)
 
-Note the engagement level if visible (likes per post vs. followers — a large following with low engagement signals a struggling brand).
+Pull current follower counts: LinkedIn · Instagram · Facebook · Twitter/X · YouTube (if applicable).
 
-**Source priority:** Direct platform search → Social Blade (for trends) → Company website social links
+Engagement signal (check the main platform — LinkedIn for B2B):
+- Review last 5–10 posts
+- Note if engagement rate appears low (<2% likes+comments/followers) or posting frequency is sparse (<1×/month)
+- Flag low engagement in report as: `Low engagement — [platform]: [observation]`
 
 ---
 
-### Step 13 — Tracxn Score
-Search Tracxn (https://tracxn.com) for the company's profile. Report:
-- Tracxn Score (if available)
-- Tracxn's category / sector tags
-- Funding stage and investors (if startup/growth stage)
-- Any notable Tracxn badges or rankings
+### Step 13 — Tracxn Profile
 
-If the company is not on Tracxn (common for traditional/non-VC companies), state this clearly and note it's likely a bootstrapped or unlisted entity.
+Search Tracxn.com for the company. Report: Tracxn Score (0–100 scale, if available) · category/sector tags · funding stage · investors · notable badges.
+
+If company is not on Tracxn (common for traditional/non-VC companies): note in report `Not on Tracxn — likely private/bootstrapped.` and check Crunchbase as fallback.
+
+If Tracxn profile requires a paid subscription to view detail: note in report `Tracxn profile exists but detail is gated.`
 
 ---
 
 ### Step 14 — Acquisitions & M&A Activity
-Search for any recent or upcoming:
-- Acquisitions (companies they have bought)
-- Being acquired (someone buying them)
-- Mergers
-- Major investment rounds
-- PE/VC backing changes
 
-This matters for BD because: a company being acquired may freeze vendor decisions; a company that just raised funding is likely to expand and outsource. M&A activity also reveals strategic direction.
+Search for any recent (last 12 months preferred): acquisitions · being acquired · mergers · major investment rounds · PE/VC backing changes.
 
-**Source priority:** News (last 12 months preferred) → Tracxn → Crunchbase → MCA filings → Economic Times / Mint / Business Standard
+BD signals:
+- Being acquired → may freeze vendor decisions (note in report)
+- Fresh funding raised → likely expanding, open to outsourcing (highlight as trigger signal for Step 15)
 
 ---
 
 ### Step 15 — BD Intelligence Briefing
-This is the most important step — it turns all the research into actionable intelligence for the person making the first call or sending the first email.
 
-Scan all web articles, press releases, interviews, leadership quotes, job postings, and news mentions. Then produce:
+**Most important step.** Synthesize findings from Steps 2–14 into actionable outreach intel. **Do not run new web searches** — use only what was gathered in prior steps.
 
-**A. Things to know before reaching out**
-Key facts about the company's current state, strategy, and challenges that a BD person must know to have a credible conversation.
+**A. Things to Know Before Reaching Out** (3–5 bullet points)
+Current strategic focus · key decision-makers · recent challenges visible in research.
 
-**B. Conversation starters**
-3–5 specific, relevant openers based on actual recent events. These should feel natural, not salesy. Examples: referencing a recent expansion, a product launch, a leadership hire, or a challenge visible in reviews.
+**B. Conversation Starters** (3–5 specific, recent hooks)
+Based on actual events found in research (expansion, funding, product launch, leadership hire, negative reviews).
+Format: *"[Company] recently [event] — we've helped similar companies with [KServe service] in situations like this."*
 
-**C. Trigger signals**
-Specific events that make NOW a good time for KServe to reach out:
-- Rapid hiring (scaling pain)
-- Geographic expansion (new markets to support)
-- New product/service launch (need for customer support ramp-up)
-- Negative reviews spiking (CX problems)
-- Funding round (growth capital ready to deploy)
-- Leadership change (new decision-makers open to new vendors)
+**C. Trigger Signals — Why Reach Out Now** (top 2–3 only)
+Select the most compelling from:
+- Rapid hiring (scaling pain) · Geographic expansion · New product/service launch
+- Negative reviews spiking · Funding round closed · Leadership change
 
-**D. Potential objections & how to handle them**
-Based on what you found, anticipate 2–3 likely pushbacks and suggest responses.
+**D. Potential Objections & Responses** (2–3 only)
+Based on company profile, anticipate likely pushbacks and provide a suggested KServe response for each.
 
 ---
 
 ## Output Format
 
-Present the final report as a structured chat summary using this template:
+Present the final report using this template:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -310,152 +328,165 @@ Research Date: [Date]
 [Website | Address | Confirmed by user]
 
 📋 LINE OF BUSINESS
-[Summary] | Source: [URL]
+[Summary]
+Source(s): [URL] | [URL]
 
 💰 TURNOVER
-[₹ X Crores | FY XXXX-XX] | Source: [URL]
+[₹ X Crores | FY XXXX-XX]
+Source(s): [URL]
 
 📍 HEAD OFFICE
-[Address] | Source: [URL]
+[Address]
+Source(s): [URL]
 
 📅 YEARS IN EXISTENCE
-[Founded XXXX | X years old] | Source: [URL]
+[Founded XXXX | X years old]
+Source(s): [URL]
 
 👔 DIRECTORS
 [Name — Designation — DIN]
 [Name — Designation — DIN]
-Source: [MCA URL]
+Source(s): [MCA URL]
 
-🏢 BRANCHES
-[X offices | Key cities] | Source: [URL]
+🗺️ BRANCHES & OFFICES
+[X locations | Key cities]
+Source(s): [URL]
 
 ⭐ REVIEWS & REPUTATION (Last 12 months)
 Top 5 Positives:
 1. ...
-2. ...
 Top 5 Negatives:
 1. ...
-2. ...
-Platforms checked: [list with URLs]
+Platforms checked: [Platform — X reviews — date range — URL]
 
-🎯 OVERALL RATING: X/10
-[Rationale]
+🎯 OVERALL RATING: X/10 — [Label]
+[2–3 sentence rationale]
 
 🤝 KSERVE FIT ASSESSMENT
-[Service] — [Fit level] — [Why]
+[Service — Fit level — Evidence]
 
 📞 CUSTOMER CARE NUMBER
-[Number] | Source: [URL]
+[Number or "Not published"] | Source(s): [URL]
 
 📱 SOCIAL MEDIA FOLLOWERS
-LinkedIn: X | Instagram: X | Facebook: X | Twitter: X
-Source: [URLs]
+LinkedIn: X | Instagram: X | Facebook: X | Twitter/X: X | YouTube: X
+Source(s): [URLs]
 
-📊 TRACXN
-[Score / Not listed] | Source: [URL]
+📊 TRACXN PROFILE
+[Score / Not listed / Gated]
+Source(s): [URL]
 
-🔀 ACQUISITIONS & M&A
-[Summary or "No recent M&A activity found"] | Source: [URL]
+🔀 M&A & FUNDING ACTIVITY
+[Summary or "No recent M&A activity found"]
+Source(s): [URL]
 
 🧠 BD INTELLIGENCE BRIEFING
-Things to know: ...
-Conversation starters: ...
-Trigger signals: ...
-Potential objections: ...
+
+Things to Know:
+• ...
+
+Conversation Starters:
+• ...
+
+Trigger Signals:
+• ...
+
+Potential Objections:
+• [Objection] → [Suggested response]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📝 DATA QUALITY
+Confidence: High (MCA-verified) / Medium (aggregators + news) / Low (partial data)
+Data age: [All within 12 months / Mixed — oldest source: date]
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
 ---
 
-## Core Research Principles
-
-**Recency first:** Always prioritize sources from the last 12 months. If only older data is available, use it but clearly flag it with the date found and a note like: *"⚠️ Most recent data available — FY2022-23. Newer filings may not yet be public."*
-
-**Every data point needs a source:** Never present a fact without a URL or document reference. If something cannot be sourced, say "Not publicly available" rather than guessing.
-
-**Worker → Checker loop:** The Checker should ask: Is the data accurate? Is the source credible? Is it recent? Is it clearly attributed? Only approve when all four are yes.
-
-**MCA is ground truth for Indian companies:** For incorporation date, directors, registered address, and financial filings — MCA (mca.gov.in) is the most authoritative source. Tofler, Zauba Corp, and similar aggregators pull from MCA and are acceptable secondary sources.
-
-**BD framing throughout:** Every section should be written with the lens of "how does this help KServe win this account?" — not just raw data but insight.
-
-**Graceful degradation:** If a tool or data source is unavailable on the current platform (e.g., a site is blocked, a tool doesn't exist), note it clearly in that section and move on. Never halt the entire report because one step hit a wall.
-
----
-
 ## Multi-Agent Architecture
 
-### PARALLEL MODE (Claude Code · OpenCode · Codex agent · any subagent-capable platform)
+### PARALLEL MODE
 
 ```
 User confirms company (Step 1)
          │
          ▼
 ┌─────────────────────────────────────────┐
-│         SPAWN ALL SIMULTANEOUSLY        │
+│    SPAWN SIMULTANEOUSLY (Steps 2–9, 11–14)   │
 │  Worker-2   Worker-3   Worker-4  ...    │
 │  Worker-5   Worker-6   Worker-7  ...    │
-│  Worker-8   Worker-9   Worker-10 ...    │
-│  Worker-11  Worker-12  Worker-13 ...    │
-│  Worker-14  Worker-15                  │
+│  Worker-8   Worker-9   Worker-11 ...    │
+│  Worker-12  Worker-13  Worker-14        │
+│  (Step 10 spawns last — needs 2–9)      │
 └─────────────────────────────────────────┘
          │ (each worker ↔ checker loop)
          ▼
 ┌─────────────────────────────────────────┐
-│         CHECKER (per worker)            │
-│  Validates: accuracy, source, recency   │
+│      CHECKER (per worker)               │
+│  Validates: source · credibility ·      │
+│  recency · accuracy · completeness      │
 │  Returns to worker if any fail          │
 └─────────────────────────────────────────┘
          │ (all approved outputs)
          ▼
 ┌─────────────────────────────────────────┐
-│         ORCHESTRATOR AGENT              │
-│  Combines all 14 approved sections      │
+│         ORCHESTRATOR                    │
+│  Assembles all 14 approved sections     │
+│  Validates completeness of report       │
 │  Renders final BD Research Report       │
 └─────────────────────────────────────────┘
 ```
 
-Use the platform's native subagent/parallel tool:
-- **Claude Code / OpenCode:** `Task` tool
-- **Codex:** `spawn_agent` or equivalent
-- **Other platforms:** use whatever parallel worker primitive is available
-
-### SEQUENTIAL MODE (Claude.ai · Cowork · any single-thread chat interface)
+### SEQUENTIAL MODE
 
 ```
 User confirms company (Step 1)
          │
     ┌────▼────┐
-    │ Step 2  │ Worker gathers → Checker validates → approved ✓
+    │ Step 2  │ Worker → Checker validates → approved ✓
     └────┬────┘
     ┌────▼────┐
-    │ Step 3  │ Worker gathers → Checker validates → approved ✓
+    │ Step 3  │ Worker → Checker validates → approved ✓
     └────┬────┘
         ...
     ┌────▼─────┐
-    │ Step 15  │ Worker gathers → Checker validates → approved ✓
+    │ Step 15  │ Worker → Checker validates → approved ✓
     └────┬─────┘
          │
          ▼
-  Orchestrator assembles
-  and presents final report
+  Orchestrator assembles and presents final report
 ```
-
-Run Steps 2–15 in order. Apply the Worker → Checker validation inline before advancing. Present the complete assembled report only after all 14 steps are done.
 
 ---
 
 ## Checker Instructions
 
-When acting as the Checker for any research step, evaluate the Worker's output against these five criteria:
+When validating any Worker output, apply all five criteria:
 
-1. **Source present?** Every fact must have a URL or named document. No source = send back.
+1. **Source present?** Every fact must have a URL or named document. No source → send back.
 2. **Source credible?** Prefer official sources (MCA, company website, major publications) over anonymous forums or low-quality aggregators.
-3. **Recency?** Is the data from the last 12 months? If older, is it flagged?
-4. **Accurate?** Does the data make internal sense? (e.g., a 2-year-old company can't have 50 years of history)
+3. **Recency?** Is the data from the last 12 months? If older, is it noted in the report with a ⚠️?
+4. **Accurate?** Does the data make internal sense? (e.g., a 2-year-old company cannot have 50 years of history)
 5. **Complete?** Did the Worker answer everything the step requires, or are there gaps?
 
-If any criterion fails, return to Worker with specific actionable feedback:
-*"The turnover figure has no source — please find the MCA filing or a news article citing the exact revenue."*
+If any criterion fails, return to Worker with specific, actionable feedback:
+*"The turnover figure has no source — find the MCA filing or a news article citing the exact revenue figure."*
 
-Only approve when all five criteria are met.
+**Max retries: 2.** If the Worker cannot satisfy all criteria after 2 attempts, approve with this note in the report:
+`⚠️ [Field]: Best available data — [brief reason data is incomplete or unavailable]`
+
+**Conflicting sources:** If sources disagree (e.g., MCA address differs from company website), defer to MCA and report both:
+`Registered (MCA): [value] | Current (website): [value]`
+
+Only approve when all five criteria are met (or a ⚠️ note is included for genuinely unavailable data).
+
+---
+
+## Orchestrator Instructions
+
+After all 14 Workers complete and each Checker has approved:
+
+1. Assemble all approved sections into the Output Format template in order
+2. Validate: no field is blank, pending, or "TBD" without a "Not publicly available" statement or a ⚠️ flag
+3. If any section is missing or incomplete, return to that step's Checker with a re-request before rendering
+4. Render the final report for presentation to the user
