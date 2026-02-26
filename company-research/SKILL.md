@@ -1,5 +1,5 @@
 ---
-name: kserve-company-research
+name: company-research
 description: >
   Comprehensive BD intelligence research skill for KServe's business development team.
   Use this skill whenever a user provides a company name (and optionally a website or address)
