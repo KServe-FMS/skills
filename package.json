@@ -1,0 +1,15 @@
+{
+  "name": "@kserve/skills",
+  "version": "1.0.0",
+  "description": "KServe agent skills monorepo — BD research and sales intelligence skills",
+  "keywords": ["skills", "claude", "ai-agent", "bpo", "kserve"],
+  "files": [
+    "*/",
+    "!node_modules/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KServe-FMS/skills.git"
+  },
+  "license": "MIT"
+}
