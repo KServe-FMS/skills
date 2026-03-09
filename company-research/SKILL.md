@@ -120,6 +120,8 @@ Tofler, Zauba Corp, and similar aggregators pull from MCA and are acceptable sec
 
 **Graceful degradation.** If a tool or data source is unavailable, note it clearly in that section and move on. Never halt the entire report because one step hit a wall.
 
+**Zero results = explicit statement.** If a web search returns no results for a required field, write "Not publicly available" or "No results found" in the report. Never fill a gap by inferring from adjacent context, similar companies, or general knowledge. An acknowledged gap is always more trustworthy than an unverified inference — and an incorrect data point handed to BD is actively harmful.
+
 ---
 
 ## Source Priority Reference
@@ -329,28 +331,28 @@ Research Date: [Date]
 
 📋 LINE OF BUSINESS
 [Summary]
-Source(s): [URL] | [URL]
+Source(s): [URL] | [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 💰 TURNOVER
 [₹ X Crores | FY XXXX-XX]
-Source(s): [URL]
+Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 📍 HEAD OFFICE
 [Address]
-Source(s): [URL]
+Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 📅 YEARS IN EXISTENCE
 [Founded XXXX | X years old]
-Source(s): [URL]
+Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 👔 DIRECTORS
 [Name — Designation — DIN]
 [Name — Designation — DIN]
-Source(s): [MCA URL]
+Source(s): [MCA URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🗺️ BRANCHES & OFFICES
 [X locations | Key cities]
-Source(s): [URL]
+Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 ⭐ REVIEWS & REPUTATION (Last 12 months)
 Top 5 Positives:
@@ -358,6 +360,7 @@ Top 5 Positives:
 Top 5 Negatives:
 1. ...
 Platforms checked: [Platform — X reviews — date range — URL]
+Confidence: HIGH/MED/LOW | Most recent review: YYYY-MM-DD
 
 🎯 OVERALL RATING: X/10 — [Label]
 [2–3 sentence rationale]
@@ -366,19 +369,19 @@ Platforms checked: [Platform — X reviews — date range — URL]
 [Service — Fit level — Evidence]
 
 📞 CUSTOMER CARE NUMBER
-[Number or "Not published"] | Source(s): [URL]
+[Number or "Not published"] | Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 📱 SOCIAL MEDIA FOLLOWERS
 LinkedIn: X | Instagram: X | Facebook: X | Twitter/X: X | YouTube: X
-Source(s): [URLs]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 📊 TRACXN PROFILE
 [Score / Not listed / Gated]
-Source(s): [URL]
+Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🔀 M&A & FUNDING ACTIVITY
 [Summary or "No recent M&A activity found"]
-Source(s): [URL]
+Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🧠 BD INTELLIGENCE BRIEFING
 
@@ -396,8 +399,11 @@ Potential Objections:
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📝 DATA QUALITY
-Confidence: High (MCA-verified) / Medium (aggregators + news) / Low (partial data)
-Data age: [All within 12 months / Mixed — oldest source: date]
+Overall: [e.g., 9/14 fields HIGH · 3 MED · 2 LOW]
+Data gaps: [List any fields that hit retry limit, or "None"]
+Oldest source: [YYYY-MM-DD]
+
+Confidence key: HIGH = MCA-verified or 2+ independent sources · MED = single credible source or aggregator · LOW = estimated, partial, or unverified
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
@@ -468,17 +474,30 @@ When validating any Worker output, apply all five criteria:
 3. **Recency?** Is the data from the last 12 months? If older, is it noted in the report with a ⚠️?
 4. **Accurate?** Does the data make internal sense? (e.g., a 2-year-old company cannot have 50 years of history)
 5. **Complete?** Did the Worker answer everything the step requires, or are there gaps?
+6. **Source diversity?** For high-stakes fields (Turnover, Directors, Head Office, Years in Existence), are there at least 2 *independent* sources? Two aggregators that both pull from MCA (e.g., Tofler + Zauba Corp) do not count as independent — MCA is the single source. If only one source exists, the field must be marked `Confidence: MED` or `LOW`, not `HIGH`. This isn't a blocker — it's a signal for the output.
+7. **BD relevance?** Does this output answer *"why should KServe reach out to this company now?"* — not just what is factually true, but what is strategically actionable. A section that lists accurate data with no BD framing should be sent back: *"Add a BD insight — what does this data signal for KServe's outreach opportunity?"* This criterion applies most strictly to Steps 8, 10, 12, 14, and 15.
 
 If any criterion fails, return to Worker with specific, actionable feedback:
 *"The turnover figure has no source — find the MCA filing or a news article citing the exact revenue figure."*
 
-**Max retries: 2.** If the Worker cannot satisfy all criteria after 2 attempts, approve with this note in the report:
-`⚠️ [Field]: Best available data — [brief reason data is incomplete or unavailable]`
+**Max retries: 2.** If the Worker cannot satisfy all criteria after 2 attempts, it must send this structured signal to the Orchestrator before approving:
 
-**Conflicting sources:** If sources disagree (e.g., MCA address differs from company website), defer to MCA and report both:
-`Registered (MCA): [value] | Current (website): [value]`
+`RETRY_EXHAUSTED: [Step N] — [field name] — [reason data is incomplete or unavailable]`
 
-Only approve when all five criteria are met (or a ⚠️ note is included for genuinely unavailable data).
+Then approve the best available output with this note in the report:
+`⚠️ [Field]: Best available data — [brief reason]`
+
+The Orchestrator collects all `RETRY_EXHAUSTED` signals and surfaces them in the Data Quality footer.
+
+**Conflicting sources:** If sources disagree, defer to the most authoritative source using this hierarchy: MCA > official company website > major publications > aggregators. Report all versions with source label.
+
+**Common contradiction patterns to check proactively:**
+- Turnover figures that differ across sources — verify the financial year and entity (parent vs. subsidiary) before flagging
+- Director names on MCA that differ from company website — recent appointments may not have propagated to MCA yet; report both and note the lag
+- Founded year vs. MCA incorporation date — these legitimately differ (founding vs. legal registration); report both if they differ
+- Branch count from website vs. Google Maps vs. LinkedIn employees by location — triangulate and report the range if inconsistent
+
+Only approve when all seven criteria are met (or a ⚠️ note and/or `RETRY_EXHAUSTED` signal is included for genuinely unavailable data).
 
 ---
 
@@ -489,4 +508,6 @@ After all 14 Workers complete and each Checker has approved:
 1. Assemble all approved sections into the Output Format template in order
 2. Validate: no field is blank, pending, or "TBD" without a "Not publicly available" statement or a ⚠️ flag
 3. If any section is missing or incomplete, return to that step's Checker with a re-request before rendering
-4. Render the final report for presentation to the user
+4. Collect all `RETRY_EXHAUSTED` signals received from Checkers. If any exist, populate the "Data gaps" line in the 📝 DATA QUALITY footer with: `[Step N — field] — [reason]` for each one. If none, write "None".
+5. Tally confidence levels across all 14 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/14 HIGH · 3 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".
+6. Render the final report for presentation to the user
