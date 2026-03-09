@@ -1,6 +1,6 @@
 {
   "name": "@kserve/skills",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "KServe agent skills monorepo — BD research and sales intelligence skills",
   "keywords": ["skills", "claude", "ai-agent", "bpo", "kserve"],
   "files": [
