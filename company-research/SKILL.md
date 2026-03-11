@@ -136,7 +136,7 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 5 — Years in Existence | MCA company master data | Company website (Our Story / About) | LinkedIn Founded year · Wikipedia |
 | 6 — Directors | MCA director listing | Tofler | Company website (Leadership) · LinkedIn |
 | 7 — Branches | Company website | Google Maps | News · LinkedIn (employees by location) |
-| 8 — Reviews | Google Business · Glassdoor · AmbitionBox (see step for industry table) | Trustpilot · Justdial · IndiaMart | App Store / Play Store reviews |
+| 8 — Reviews | Google Business · Trustpilot · AmbitionBox · Glassdoor | Amazon · Flipkart · App Store · Google Play · Justdial | AppFollow · AppBot (app reviews) · job postings (Step 8E tool detection only) |
 | 9 — Rating | Synthesized from Step 8 output | — | — |
 | 10 — KServe Fit | Synthesized from Steps 2–9 output | — | — |
 | 11 — Customer Care | Company website | Google Business · Justdial | App Store / Play Store listing |
@@ -193,21 +193,122 @@ Find: total number of offices/branches/locations · key cities/states · any int
 
 ### Step 8 — Reviews & Reputation (Last 12 Months)
 
-Search for reviews from the **last 12 months** on platforms relevant to the company type:
+Research all five sub-sections below. Each sub-section is mandatory — if no data is found for a sub-section, state that explicitly (e.g., "No product reviews found on searched platforms"). Do not silently omit any sub-section.
 
-| Company type | Platforms to check |
+If less than 12 months of reviews exist for any sub-section, include older reviews and note: `⚠️ Full 12-month data unavailable; includes reviews from [date range].`
+
+---
+
+**A — Product Review**
+
+Search for product-specific reviews and, if the company has a consumer app, app store reviews.
+
+Product review sources (use platforms relevant to the company type):
+
+| Company type | Platforms |
 |---|---|
-| Consumer brand / eCommerce | Google Business · Trustpilot · Flipkart · Amazon · Myntra |
-| Employer brand | AmbitionBox · Glassdoor · Indeed |
-| B2B / General | Google Business · Justdial · IndiaMart |
-| Finance / Insurance | Google Business · consumer forums |
+| Consumer brand / eCommerce | Amazon · Flipkart · Myntra · Google Shopping |
+| SaaS / B2B software | G2 · Capterra · Software Advice |
+| Finance / Insurance | consumer forums · Google Business product listings |
+| General | IndiaMart · Justdial product listings |
+
+App review sources:
+1. Primary — direct search: `site:apps.apple.com [company name]` and `site:play.google.com [company name]`
+2. Fallback — AppFollow.io, AppBot.co (often accessible without paywall)
+3. Last resort — Reddit, Product Hunt, tech blogs
+
+Find:
+- Platform, aggregate rating, review volume
+- Top recurring themes from critical reviews (1–2 stars): note the most frequent complaints, platforms, and date range
+- Top recurring themes from positive reviews (4–5 stars): same format
+- For apps: app name, platform (iOS / Android / Both), aggregate rating; any visible company replies on reviews — note whether they appear on positive, negative, or both review types; include one verbatim example ≤40 words
+- If no app found: write `No consumer app found — app review not applicable` and document the search query used
+- If app found but reviews are gated: write `App found ([name] — [rating]/5 on [platform]) but individual review content is gated`
+
+BD framing: what does product/app quality feedback signal about operational gaps KServe can address?
+
+---
+
+**B — Service Review**
+
+Search for customer sentiment about how the company serves its customers — support quality, delivery, responsiveness, experience.
+
+Sources:
+- Google Business Profile, Trustpilot, Justdial (all company types)
+- Finance / Insurance: banking ombudsman forums, consumer court portals, RBI complaint trackers
+- B2B: IndiaMart seller ratings, LinkedIn client testimonials, absence of case studies as a signal
+
+Find:
+- Recurring themes in customer service feedback: response time, resolution quality, staff attitude
+- Specific complaints about support channels (phone, chat, email, in-store)
+- Platforms checked with review count and date range
+
+BD framing: where does customer service break down? This maps directly to KServe's Customer Service offering.
+
+---
+
+**C — Employee Review**
+
+Search for what employees say about working at this company — signals operational maturity, management culture, and attrition risk.
+
+Sources:
+- AmbitionBox (primary for Indian companies), Glassdoor, Indeed
+- LinkedIn "Reviews" tab if available
+
+Find:
+- Overall rating on each platform, review volume
+- Top 3 positives (recurring themes)
+- Top 3 negatives (recurring themes)
+- Any mentions of process quality, training programs, tech stack, attrition rate, management style
+
+BD framing: high attrition or poor internal process = outsourcing appetite; strong culture = partnership-friendly decision-maker.
+
+---
+
+**D — General Company Review**
+
+Search for overall public perception, business reputation, and press sentiment — the narrative that doesn't fit product or service reviews.
+
+Sources:
+- Google Business (overall company rating, not product/service-specific)
+- Industry forums and discussion boards
+- News and media sentiment (last 12 months)
+- Justdial, IndiaMart general business listings
+
+Find:
+- Overall public reputation narrative
+- Any controversies, regulatory issues, or legal disputes
+- Any awards, recognitions, or positive press
+- Key sentiment trend (improving / stable / declining)
+
+BD framing: reputational context that shapes outreach tone — a company under scrutiny needs a different pitch than one riding a growth wave.
+
+---
+
+**E — Review Handling Methodology**
+
+Research how the company manages and responds to reviews across all platforms found in A–D. Use what was already observed in A–D as your primary signal. Run targeted additional searches only for tool detection (job postings, BuiltWith) — do not re-research review content already gathered.
+
+Look for evidence of:
+
+| Signal | Where to find it |
+|---|---|
+| Platform-native replies | Replies visible on Google Maps, App Store, Play Store, Trustpilot, Glassdoor |
+| Email-based follow-up | Company support/FAQ pages; reviewer mentions ("they emailed me after I posted") |
+| Third-party review tools | Job postings: `[company] "Birdeye" OR "Yotpo" OR "Respond.io" OR "Medallia" OR "ReviewTrackers"`; BuiltWith / G2 integrations |
+| Automated vs manual | Identical boilerplate across reviews = likely automated; named agent sign-off + review-specific language = manual |
+| Response rate | From reviews examined: High (>60%) / Medium (20–60%) / Low (<20%) / None — always note sample size (e.g., "based on 12 reviews examined") |
+| Response speed | Timestamp lag between review and reply: <24h / 1–7 days / >7 days / Inconsistent / Not determinable |
 
 Synthesize into:
-- **Top 5 Positives** — recurring themes across multiple reviews (note frequency)
-- **Top 5 Negatives** — recurring pain points (these are BD opportunities for KServe)
-- **Platforms checked** — list each with review count and date range
+- Response channel(s) used
+- Response style: Personalized / Templated / Mixed / Not found
+- Response rate estimate with basis
+- Response speed estimate
+- Tool indicators (any third-party review management tools detected)
+- **BD signal**: what does this methodology reveal about the company's CS culture, and where does KServe's offering address the gap? Must be an implication, not a description ("They respond to reviews" is not BD insight).
 
-If less than 12 months of reviews exist, include older reviews and note in report: `⚠️ Full 12-month data unavailable; includes reviews from [date range].`
+If no responses found across any platform: `No review responses found across [list platforms checked] — no active review management program detected, or handling is off-platform (email/DM only).`
 
 ---
 
@@ -301,17 +402,26 @@ BD signals:
 **A. Things to Know Before Reaching Out** (3–5 bullet points)
 Current strategic focus · key decision-makers · recent challenges visible in research.
 
+If Step 8E found response rate Low or None: include a bullet noting the visible CS gap — list platforms checked and the estimated response rate. If Step 8A found an app rating below 3.5/5 with meaningful review volume (typically 50+ ratings, or fewer if the platform prominently displays them): include a bullet on the app reputation risk and whether the company is actively engaging with it.
+
 **B. Conversation Starters** (3–5 specific, recent hooks)
 Based on actual events found in research (expansion, funding, product launch, leadership hire, negative reviews).
 Format: *"[Company] recently [event] — we've helped similar companies with [KServe service] in situations like this."*
+
+If Step 8E found templated or absent review responses, use: *"[Company] has [X] total reviews on [platform] with a [High/Medium/Low/None] reply rate — we've helped similar [industry] companies set up structured review response programs as part of a broader CX operation."* Use only if evidenced in Step 8E — do not fabricate reply-rate label or platform details.
 
 **C. Trigger Signals — Why Reach Out Now** (top 2–3 only)
 Select the most compelling from:
 - Rapid hiring (scaling pain) · Geographic expansion · New product/service launch
 - Negative reviews spiking · Funding round closed · Leadership change
+- App store rating below 3.5/5 with high review volume → visible product/service quality signal
+- Review response rate Low or None across multiple platforms → underdeveloped CS infrastructure
+- Third-party review tool detected (e.g., Birdeye, Yotpo) → pitch shifts from "you need this" to "we can operate this for you at scale"
 
 **D. Potential Objections & Responses** (2–3 only)
 Based on company profile, anticipate likely pushbacks and provide a suggested KServe response for each.
+
+If a review management tool was detected in Step 8E, anticipate: *"We already use [tool] to manage reviews."* Suggested response: *"That's exactly the setup we integrate with — KServe handles the human judgment layer (response drafting, escalation routing) within your existing tool. You keep the tech stack, we remove the headcount burden."*
 
 ---
 
@@ -355,12 +465,55 @@ Source(s): [MCA URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 ⭐ REVIEWS & REPUTATION (Last 12 months)
-Top 5 Positives:
-1. ...
-Top 5 Negatives:
-1. ...
-Platforms checked: [Platform — X reviews — date range — URL]
-Confidence: HIGH/MED/LOW | Most recent review: YYYY-MM-DD
+
+📦 A — PRODUCT REVIEW
+[If no product reviews found: "No product reviews found on searched platforms"]
+[Repeat for each platform checked:] Platform — Rating — Review count — URL
+Top critical themes: ...
+Top positive themes: ...
+App:
+  [Found]: [name] | [iOS / Android / Both] | [X.X]/5 ([X,XXX] ratings)
+    Sample critical: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
+    Sample positive: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
+    Company replies on app: Yes (on: positive / negative / both) / No / Partial
+      [If Yes or Partial:] Sample company reply: "[verbatim ≤40 words]" — [YYYY-MM-DD] | [URL]
+  [Gated]: "App found ([name] — [rating]/5 on [platform]) but individual review content is gated. Search query used: [query]"
+  [Not found]: "No consumer app found — app review not applicable. Search query used: [query]"
+Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
+
+🛎️ B — SERVICE REVIEW
+[If no service reviews found: "No service reviews found on searched platforms"]
+[Repeat for each platform checked:] Platform — Rating — Review count — URL
+Top positives: ...
+Top negatives: ...
+Notable signal: [e.g., "No case studies found — signals limited B2B social proof" / "N/A"]
+BD signal: [what this means for KServe's Customer Service pitch]
+Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
+
+👥 C — EMPLOYEE REVIEW
+[If no employee reviews found: "No employee reviews found on searched platforms"]
+[Repeat for each platform checked:] Platform — Rating — Review count — URL
+Top positives: ...
+Top negatives: ...
+BD signal: [attrition / culture signal for outreach approach]
+Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
+
+🌐 D — GENERAL COMPANY REVIEW
+[If no general reviews found: "No general company reviews found on searched platforms"]
+[Repeat for each platform checked:] Platform — Rating — URL
+Overall reputation narrative: ...
+Notable: [awards / controversies / press sentiment]
+BD signal: [outreach tone implication — e.g., "regulatory scrutiny: open with credibility" / "growth wave: lead with scale support"]
+Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
+
+🔄 E — REVIEW HANDLING METHODOLOGY
+Response channel(s): [e.g., Google Maps native · App Store native / Not found]
+Response style: Personalized / Templated / Mixed / Not found
+Response rate: High (>60%) / Medium (20–60%) / Low (<20%) / None [sample: X reviews examined]
+Response speed: <24h / 1–7 days / >7 days / Inconsistent / Not determinable
+Tool indicators: [e.g., "Job posting cites Birdeye" / "None detected"]
+BD signal: [1–2 sentences: CS culture implication and KServe opportunity]
+Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🎯 OVERALL RATING: X/10 — [Label]
 [2–3 sentence rationale]
@@ -474,8 +627,13 @@ When validating any Worker output, apply all five criteria:
 3. **Recency?** Is the data from the last 12 months? If older, is it noted in the report with a ⚠️?
 4. **Accurate?** Does the data make internal sense? (e.g., a 2-year-old company cannot have 50 years of history)
 5. **Complete?** Did the Worker answer everything the step requires, or are there gaps?
+
+   *For Step 8 specifically:* Did the Worker produce all five sub-sections (A — Product Review, B — Service Review, C — Employee Review, D — General Company Review, E — Review Handling Methodology)? Sub-sections are not optional — if a sub-section has no data, it must say so explicitly (e.g., "No product reviews found"). Silent omissions → send back. Verbatim review excerpts (required in Section A's app sub-section only, except when `[Gated]` is documented; product reviews in A and all of B, C, and D use themes — not quotes) must be: in quotation marks, ≤40 words, attributed with date and source URL. Paraphrases dressed as quotes → send back. If the Worker has documented `[Gated]`, verbatim excerpts are not required — accept without retry.
+
 6. **Source diversity?** For high-stakes fields (Turnover, Directors, Head Office, Years in Existence), are there at least 2 *independent* sources? Two aggregators that both pull from MCA (e.g., Tofler + Zauba Corp) do not count as independent — MCA is the single source. If only one source exists, the field must be marked `Confidence: MED` or `LOW`, not `HIGH`. This isn't a blocker — it's a signal for the output.
 7. **BD relevance?** Does this output answer *"why should KServe reach out to this company now?"* — not just what is factually true, but what is strategically actionable. A section that lists accurate data with no BD framing should be sent back: *"Add a BD insight — what does this data signal for KServe's outreach opportunity?"* This criterion applies most strictly to Steps 8, 10, 12, 14, and 15.
+
+   *For Step 8E specifically:* The BD signal field must be an implication, not a description. "They respond to reviews" is not BD insight. Acceptable example: "Review responses are boilerplate and slow (>7 days) — signals understaffed or unstructured CS; KServe's Customer Service offering directly addresses this." If the BD signal reads as description only → send back. Response rate estimates must always reference a sample count (e.g., "based on 12 reviews examined") — not conditional on volume. "None detected" is always valid if platforms were checked. Section 8E defaults to Confidence: MED (methodology is inferred, not stated) unless a job posting or news article explicitly names a tool or process.
 
 If any criterion fails, return to Worker with specific, actionable feedback:
 *"The turnover figure has no source — find the MCA filing or a news article citing the exact revenue figure."*
