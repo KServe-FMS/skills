@@ -214,8 +214,8 @@ Product review sources (use platforms relevant to the company type):
 
 App review sources:
 1. Primary — direct search: `site:apps.apple.com [company name]` and `site:play.google.com [company name]`
-2. Secondary — AppFollow.io, AppBot.co (often accessible without paywall)
-3. Fallback — Reddit, Product Hunt, tech blogs
+2. Fallback — AppFollow.io, AppBot.co (often accessible without paywall)
+3. Last resort — Reddit, Product Hunt, tech blogs
 
 Find:
 - Platform, aggregate rating, review volume
@@ -476,14 +476,14 @@ App:
     Sample critical: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
     Sample positive: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
     Company replies on app: Yes (on: positive / negative / both) / No / Partial
-      Sample company reply: "[verbatim ≤40 words]" — [YYYY-MM-DD] | [URL]
+      [If Yes or Partial:] Sample company reply: "[verbatim ≤40 words]" — [YYYY-MM-DD] | [URL]
   [Gated]: "App found ([name] — [rating]/5 on [platform]) but individual review content is gated. Search query used: [query]"
   [Not found]: "No consumer app found — app review not applicable. Search query used: [query]"
 Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 
 🛎️ B — SERVICE REVIEW
 [If no service reviews found: "No service reviews found on searched platforms"]
-Platform — Rating — Review count — URL
+[Repeat for each platform checked:] Platform — Rating — Review count — URL
 Top positives: ...
 Top negatives: ...
 Notable signal: [e.g., "No case studies found — signals limited B2B social proof" / "N/A"]
@@ -492,7 +492,7 @@ Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 
 👥 C — EMPLOYEE REVIEW
 [If no employee reviews found: "No employee reviews found on searched platforms"]
-Platform — Rating — Review count — URL
+[Repeat for each platform checked:] Platform — Rating — Review count — URL
 Top positives: ...
 Top negatives: ...
 BD signal: [attrition / culture signal for outreach approach]
@@ -500,9 +500,10 @@ Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 
 🌐 D — GENERAL COMPANY REVIEW
 [If no general reviews found: "No general company reviews found on searched platforms"]
-Platform — Rating — URL
+[Repeat for each platform checked:] Platform — Rating — URL
 Overall reputation narrative: ...
 Notable: [awards / controversies / press sentiment]
+BD signal: [outreach tone implication — e.g., "regulatory scrutiny: open with credibility" / "growth wave: lead with scale support"]
 Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 
 🔄 E — REVIEW HANDLING METHODOLOGY
