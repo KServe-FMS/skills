@@ -221,7 +221,7 @@ Find:
 - Platform, aggregate rating, review volume
 - Top recurring themes from critical reviews (1–2 stars): note the most frequent complaints, platforms, and date range
 - Top recurring themes from positive reviews (4–5 stars): same format
-- For apps: app name, platform (iOS / Android / Both), aggregate rating; any visible company replies on reviews — quote verbatim ≤40 words, note whether replies appear on positive, negative, or both reviews
+- For apps: app name, platform (iOS / Android / Both), aggregate rating; any visible company replies on reviews — note whether they appear on positive, negative, or both review types; include one verbatim example ≤40 words
 - If no app found: write `No consumer app found — app review not applicable` and document the search query used
 - If app found but reviews are gated: write `App found ([name] — [rating]/5 on [platform]) but individual review content is gated`
 
@@ -402,13 +402,13 @@ BD signals:
 **A. Things to Know Before Reaching Out** (3–5 bullet points)
 Current strategic focus · key decision-makers · recent challenges visible in research.
 
-If Step 8E found response rate Low or None: include a bullet noting the visible CS gap — list platforms checked and the estimated response rate. If Step 8A found an app rating below 3.5/5 with meaningful review volume: include a bullet on the app reputation risk and whether the company is actively engaging with it.
+If Step 8E found response rate Low or None: include a bullet noting the visible CS gap — list platforms checked and the estimated response rate. If Step 8A found an app rating below 3.5/5 with meaningful review volume (typically 50+ ratings, or fewer if the platform prominently displays them): include a bullet on the app reputation risk and whether the company is actively engaging with it.
 
 **B. Conversation Starters** (3–5 specific, recent hooks)
 Based on actual events found in research (expansion, funding, product launch, leadership hire, negative reviews).
 Format: *"[Company] recently [event] — we've helped similar companies with [KServe service] in situations like this."*
 
-If Step 8E found templated or absent review responses, use: *"[Company] has [X] reviews on [platform] with a [High/Medium/Low/None] reply rate — we've helped similar [industry] companies set up structured review response programs as part of a broader CX operation."* Use only if evidenced in Step 8E — do not fabricate reply-rate label or platform details.
+If Step 8E found templated or absent review responses, use: *"[Company] has [X] total reviews on [platform] with a [High/Medium/Low/None] reply rate — we've helped similar [industry] companies set up structured review response programs as part of a broader CX operation."* Use only if evidenced in Step 8E — do not fabricate reply-rate label or platform details.
 
 **C. Trigger Signals — Why Reach Out Now** (top 2–3 only)
 Select the most compelling from:
@@ -468,14 +468,15 @@ Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 📦 A — PRODUCT REVIEW
 [If no product reviews found: "No product reviews found on searched platforms"]
-Platform — Rating — Review count — URL
+[Repeat for each platform checked:] Platform — Rating — Review count — URL
 Top critical themes: ...
 Top positive themes: ...
 App:
   [Found]: [name] | [iOS / Android / Both] | [X.X]/5 ([X,XXX] ratings)
     Sample critical: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
     Sample positive: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
-    Company replies on app: Yes / No / Partial
+    Company replies on app: Yes (on: positive / negative / both) / No / Partial
+      Sample company reply: "[verbatim ≤40 words]" — [YYYY-MM-DD] | [URL]
   [Not found]: "No consumer app found — app review not applicable. Search query used: [query]"
 Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 
@@ -625,7 +626,7 @@ When validating any Worker output, apply all five criteria:
 4. **Accurate?** Does the data make internal sense? (e.g., a 2-year-old company cannot have 50 years of history)
 5. **Complete?** Did the Worker answer everything the step requires, or are there gaps?
 
-   *For Step 8 specifically:* Did the Worker produce all five sub-sections (A — Product Review, B — Service Review, C — Employee Review, D — General Company Review, E — Review Handling Methodology)? Sub-sections are not optional — if a sub-section has no data, it must say so explicitly (e.g., "No product reviews found"). Silent omissions → send back. Verbatim review excerpts (required in Section A only; B, C, and D use themes — not quotes) must be: in quotation marks, ≤40 words, attributed with date and source URL. Paraphrases dressed as quotes → send back.
+   *For Step 8 specifically:* Did the Worker produce all five sub-sections (A — Product Review, B — Service Review, C — Employee Review, D — General Company Review, E — Review Handling Methodology)? Sub-sections are not optional — if a sub-section has no data, it must say so explicitly (e.g., "No product reviews found"). Silent omissions → send back. Verbatim review excerpts (required in Section A's app sub-section only; product reviews in A and all of B, C, and D use themes — not quotes) must be: in quotation marks, ≤40 words, attributed with date and source URL. Paraphrases dressed as quotes → send back.
 
 6. **Source diversity?** For high-stakes fields (Turnover, Directors, Head Office, Years in Existence), are there at least 2 *independent* sources? Two aggregators that both pull from MCA (e.g., Tofler + Zauba Corp) do not count as independent — MCA is the single source. If only one source exists, the field must be marked `Confidence: MED` or `LOW`, not `HIGH`. This isn't a blocker — it's a signal for the output.
 7. **BD relevance?** Does this output answer *"why should KServe reach out to this company now?"* — not just what is factually true, but what is strategically actionable. A section that lists accurate data with no BD framing should be sent back: *"Add a BD insight — what does this data signal for KServe's outreach opportunity?"* This criterion applies most strictly to Steps 8, 10, 12, 14, and 15.
