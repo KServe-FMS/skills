@@ -477,6 +477,7 @@ App:
     Sample positive: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
     Company replies on app: Yes (on: positive / negative / both) / No / Partial
       Sample company reply: "[verbatim ≤40 words]" — [YYYY-MM-DD] | [URL]
+  [Gated]: "App found ([name] — [rating]/5 on [platform]) but individual review content is gated. Search query used: [query]"
   [Not found]: "No consumer app found — app review not applicable. Search query used: [query]"
 Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 
@@ -626,7 +627,7 @@ When validating any Worker output, apply all five criteria:
 4. **Accurate?** Does the data make internal sense? (e.g., a 2-year-old company cannot have 50 years of history)
 5. **Complete?** Did the Worker answer everything the step requires, or are there gaps?
 
-   *For Step 8 specifically:* Did the Worker produce all five sub-sections (A — Product Review, B — Service Review, C — Employee Review, D — General Company Review, E — Review Handling Methodology)? Sub-sections are not optional — if a sub-section has no data, it must say so explicitly (e.g., "No product reviews found"). Silent omissions → send back. Verbatim review excerpts (required in Section A's app sub-section only; product reviews in A and all of B, C, and D use themes — not quotes) must be: in quotation marks, ≤40 words, attributed with date and source URL. Paraphrases dressed as quotes → send back.
+   *For Step 8 specifically:* Did the Worker produce all five sub-sections (A — Product Review, B — Service Review, C — Employee Review, D — General Company Review, E — Review Handling Methodology)? Sub-sections are not optional — if a sub-section has no data, it must say so explicitly (e.g., "No product reviews found"). Silent omissions → send back. Verbatim review excerpts (required in Section A's app sub-section only, except when `[Gated]` is documented; product reviews in A and all of B, C, and D use themes — not quotes) must be: in quotation marks, ≤40 words, attributed with date and source URL. Paraphrases dressed as quotes → send back. If the Worker has documented `[Gated]`, verbatim excerpts are not required — accept without retry.
 
 6. **Source diversity?** For high-stakes fields (Turnover, Directors, Head Office, Years in Existence), are there at least 2 *independent* sources? Two aggregators that both pull from MCA (e.g., Tofler + Zauba Corp) do not count as independent — MCA is the single source. If only one source exists, the field must be marked `Confidence: MED` or `LOW`, not `HIGH`. This isn't a blocker — it's a signal for the output.
 7. **BD relevance?** Does this output answer *"why should KServe reach out to this company now?"* — not just what is factually true, but what is strategically actionable. A section that lists accurate data with no BD framing should be sent back: *"Add a BD insight — what does this data signal for KServe's outreach opportunity?"* This criterion applies most strictly to Steps 8, 10, 12, 14, and 15.
