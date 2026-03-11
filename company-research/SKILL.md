@@ -136,7 +136,7 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 5 — Years in Existence | MCA company master data | Company website (Our Story / About) | LinkedIn Founded year · Wikipedia |
 | 6 — Directors | MCA director listing | Tofler | Company website (Leadership) · LinkedIn |
 | 7 — Branches | Company website | Google Maps | News · LinkedIn (employees by location) |
-| 8 — Reviews | Google Business · Trustpilot · AmbitionBox · Glassdoor | Amazon · Flipkart · App Store · Google Play · Justdial | AppFollow · job postings for review tool detection |
+| 8 — Reviews | Google Business · Trustpilot · AmbitionBox · Glassdoor | Amazon · Flipkart · App Store · Google Play · Justdial | AppFollow · AppBot (app reviews) · job postings (Step 8E tool detection only) |
 | 9 — Rating | Synthesized from Step 8 output | — | — |
 | 10 — KServe Fit | Synthesized from Steps 2–9 output | — | — |
 | 11 — Customer Care | Company website | Google Business · Justdial | App Store / Play Store listing |
@@ -287,7 +287,7 @@ BD framing: reputational context that shapes outreach tone — a company under s
 
 **E — Review Handling Methodology**
 
-Research how the company manages and responds to reviews across all platforms found in A–D. Do not run new web searches beyond what is needed to answer this specific question.
+Research how the company manages and responds to reviews across all platforms found in A–D. Use what was already observed in A–D as your primary signal. Run targeted additional searches only for tool detection (job postings, BuiltWith) — do not re-research review content already gathered.
 
 Look for evidence of:
 
@@ -297,7 +297,7 @@ Look for evidence of:
 | Email-based follow-up | Company support/FAQ pages; reviewer mentions ("they emailed me after I posted") |
 | Third-party review tools | Job postings: `[company] "Birdeye" OR "Yotpo" OR "Respond.io" OR "Medallia" OR "ReviewTrackers"`; BuiltWith / G2 integrations |
 | Automated vs manual | Identical boilerplate across reviews = likely automated; named agent sign-off + review-specific language = manual |
-| Response rate | From reviews examined: High (>60%) / Medium (20–60%) / Low (<20%) / None — note sample size if fewer than 5 reviews examined |
+| Response rate | From reviews examined: High (>60%) / Medium (20–60%) / Low (<20%) / None — always note sample size (e.g., "based on 12 reviews examined") |
 | Response speed | Timestamp lag between review and reply: <24h / 1–7 days / >7 days / Inconsistent / Not determinable |
 
 Synthesize into:
@@ -408,7 +408,7 @@ If Step 8E found response rate Low or None: include a bullet noting the visible 
 Based on actual events found in research (expansion, funding, product launch, leadership hire, negative reviews).
 Format: *"[Company] recently [event] — we've helped similar companies with [KServe service] in situations like this."*
 
-If Step 8E found templated or absent review responses, use: *"[Company] has [X] reviews on [platform] with [rate]% reply rate — we've helped similar [industry] companies set up structured review response programs as part of a broader CX operation."* Use only if evidenced in Step 8E — do not fabricate response rate or platform details.
+If Step 8E found templated or absent review responses, use: *"[Company] has [X] reviews on [platform] with a [High/Medium/Low/None] reply rate — we've helped similar [industry] companies set up structured review response programs as part of a broader CX operation."* Use only if evidenced in Step 8E — do not fabricate reply-rate label or platform details.
 
 **C. Trigger Signals — Why Reach Out Now** (top 2–3 only)
 Select the most compelling from:
@@ -471,11 +471,12 @@ Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 Platform — Rating — Review count — URL
 Top critical themes: ...
 Top positive themes: ...
-App (if applicable): [name] | [iOS / Android / Both] | [X.X]/5 ([X,XXX] ratings)
-  Sample critical: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD]
-  Sample positive: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD]
-  Company replies on app: Yes / No / Partial
-[If no app: "No consumer app found — app review not applicable"]
+App:
+  [Found]: [name] | [iOS / Android / Both] | [X.X]/5 ([X,XXX] ratings)
+    Sample critical: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
+    Sample positive: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
+    Company replies on app: Yes / No / Partial
+  [Not found]: "No consumer app found — app review not applicable. Search query used: [query]"
 Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 
 🛎️ B — SERVICE REVIEW
@@ -483,6 +484,7 @@ Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 Platform — Rating — Review count — URL
 Top positives: ...
 Top negatives: ...
+Notable signal: [e.g., "No case studies found — signals limited B2B social proof" / "N/A"]
 BD signal: [what this means for KServe's Customer Service pitch]
 Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 
@@ -623,7 +625,7 @@ When validating any Worker output, apply all five criteria:
 4. **Accurate?** Does the data make internal sense? (e.g., a 2-year-old company cannot have 50 years of history)
 5. **Complete?** Did the Worker answer everything the step requires, or are there gaps?
 
-   *For Step 8 specifically:* Did the Worker produce all five sub-sections (A — Product Review, B — Service Review, C — Employee Review, D — General Company Review, E — Review Handling Methodology)? Sub-sections are not optional — if a sub-section has no data, it must say so explicitly (e.g., "No product reviews found"). Silent omissions → send back. Verbatim review excerpts must be: in quotation marks, ≤40 words, attributed with date and source URL. Paraphrases dressed as quotes → send back.
+   *For Step 8 specifically:* Did the Worker produce all five sub-sections (A — Product Review, B — Service Review, C — Employee Review, D — General Company Review, E — Review Handling Methodology)? Sub-sections are not optional — if a sub-section has no data, it must say so explicitly (e.g., "No product reviews found"). Silent omissions → send back. Verbatim review excerpts (required in Section A only; B, C, and D use themes — not quotes) must be: in quotation marks, ≤40 words, attributed with date and source URL. Paraphrases dressed as quotes → send back.
 
 6. **Source diversity?** For high-stakes fields (Turnover, Directors, Head Office, Years in Existence), are there at least 2 *independent* sources? Two aggregators that both pull from MCA (e.g., Tofler + Zauba Corp) do not count as independent — MCA is the single source. If only one source exists, the field must be marked `Confidence: MED` or `LOW`, not `HIGH`. This isn't a blocker — it's a signal for the output.
 7. **BD relevance?** Does this output answer *"why should KServe reach out to this company now?"* — not just what is factually true, but what is strategically actionable. A section that lists accurate data with no BD framing should be sent back: *"Add a BD insight — what does this data signal for KServe's outreach opportunity?"* This criterion applies most strictly to Steps 8, 10, 12, 14, and 15.
