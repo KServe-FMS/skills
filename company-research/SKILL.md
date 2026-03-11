@@ -219,8 +219,8 @@ App review sources:
 
 Find:
 - Platform, aggregate rating, review volume
-- 3–5 critical reviews (1–2 stars): verbatim excerpt ≤40 words, reviewer display name if shown, date (YYYY-MM-DD), source URL
-- 3–5 positive reviews (4–5 stars): same format
+- Top recurring themes from critical reviews (1–2 stars): note the most frequent complaints, platforms, and date range
+- Top recurring themes from positive reviews (4–5 stars): same format
 - For apps: app name, platform (iOS / Android / Both), aggregate rating; any visible company replies on reviews — quote verbatim ≤40 words, note whether replies appear on positive, negative, or both reviews
 - If no app found: write `No consumer app found — app review not applicable` and document the search query used
 - If app found but reviews are gated: write `App found ([name] — [rating]/5 on [platform]) but individual review content is gated`
@@ -630,7 +630,7 @@ When validating any Worker output, apply all five criteria:
 6. **Source diversity?** For high-stakes fields (Turnover, Directors, Head Office, Years in Existence), are there at least 2 *independent* sources? Two aggregators that both pull from MCA (e.g., Tofler + Zauba Corp) do not count as independent — MCA is the single source. If only one source exists, the field must be marked `Confidence: MED` or `LOW`, not `HIGH`. This isn't a blocker — it's a signal for the output.
 7. **BD relevance?** Does this output answer *"why should KServe reach out to this company now?"* — not just what is factually true, but what is strategically actionable. A section that lists accurate data with no BD framing should be sent back: *"Add a BD insight — what does this data signal for KServe's outreach opportunity?"* This criterion applies most strictly to Steps 8, 10, 12, 14, and 15.
 
-   *For Step 8E specifically:* The BD signal field must be an implication, not a description. "They respond to reviews" is not BD insight. Acceptable example: "Review responses are boilerplate and slow (>7 days) — signals understaffed or unstructured CS; KServe's Customer Service offering directly addresses this." If the BD signal reads as description only → send back. Response rate estimates must reference a sample count; if fewer than 5 reviews are visible, the Worker must note the sample size and qualify the estimate. "None detected" is always valid if platforms were checked. Section 8E defaults to Confidence: MED (methodology is inferred, not stated) unless a job posting or news article explicitly names a tool or process.
+   *For Step 8E specifically:* The BD signal field must be an implication, not a description. "They respond to reviews" is not BD insight. Acceptable example: "Review responses are boilerplate and slow (>7 days) — signals understaffed or unstructured CS; KServe's Customer Service offering directly addresses this." If the BD signal reads as description only → send back. Response rate estimates must always reference a sample count (e.g., "based on 12 reviews examined") — not conditional on volume. "None detected" is always valid if platforms were checked. Section 8E defaults to Confidence: MED (methodology is inferred, not stated) unless a job posting or news article explicitly names a tool or process.
 
 If any criterion fails, return to Worker with specific, actionable feedback:
 *"The turnover figure has no source — find the MCA filing or a news article citing the exact revenue figure."*
