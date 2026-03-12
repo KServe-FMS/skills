@@ -1,6 +1,6 @@
 {
   "name": "@kserve/skills",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "KServe agent skills — AI-powered BD research and sales intelligence for BPO outreach",
   "keywords": [
     "skills",
