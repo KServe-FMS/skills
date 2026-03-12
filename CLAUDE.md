@@ -38,8 +38,8 @@ Every `SKILL.md` follows this pattern:
 ### Multi-Agent Pattern (used in company-research)
 
 - **Worker**: Performs the research/action for a single step
-- **Checker**: Validates worker output against 5 criteria (source present, credible, recent, accurate, complete); max 2 retries
-- **Orchestrator**: Assembles final output after all workers complete
+- **Checker**: Validates worker output against 7 criteria (source present, credible, recent, accurate, complete, source diverse, BD-relevant); max 2 retries
+- **Orchestrator**: Assembles final output after all workers complete; verifies Wave 2 steps ran after Wave 1
 
 ### Adding a New Skill
 
@@ -50,6 +50,6 @@ Every `SKILL.md` follows this pattern:
 
 ## Key Files
 
-- `company-research/SKILL.md` — the primary skill (492 lines); reference for skill authoring patterns
+- `company-research/SKILL.md` — the primary skill (~950+ lines); reference for skill authoring patterns. Step 8 has 5 sub-sections (8A–8E). New steps added: 6B (Decision-Maker Dossiers), 7B (Job Postings), 7C (Technology Stack), 10B (ICP Score). PARALLEL mode uses explicit two-wave spawning.
 - `package.json` — npm package metadata; `files: ["*/", "!node_modules/"]` auto-includes all skill dirs
 - `README.md` — installation instructions and skill listing

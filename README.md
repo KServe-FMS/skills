@@ -43,7 +43,7 @@ The skill confirms the right company with you first, then runs the full research
 
 ## What you get
 
-A structured BD intelligence report covering 14 sections:
+A structured BD intelligence report covering 20 sections:
 
 | Section | What it contains |
 |---|---|
@@ -52,16 +52,20 @@ A structured BD intelligence report covering 14 sections:
 | 💰 Turnover | Revenue in ₹ Crores with financial year and MCA source |
 | 📍 Head Office | Registered address (MCA) cross-referenced with operating address |
 | 📅 Years in Existence | Incorporation year and company age |
-| 👔 Directors | MCA-verified names, DINs, and BD-relevant decision-makers |
+| 👔 Directors | MCA-verified names, DINs, LinkedIn profiles, and BD-relevant decision-makers (★-flagged) |
+| 🧑‍💼 Decision-Maker Dossiers | 3-line brief per ★-flagged director: background, LinkedIn activity, likely first objection |
 | 🗺️ Branches & Offices | Location count, key cities, international presence |
-| ⭐ Reviews & Reputation | Top 5 positives and negatives from the last 12 months |
-| 🎯 Overall Rating | Synthesized reputation score (1–10) with rationale |
-| 🤝 KServe Fit | 3–5 services ranked HIGH/MEDIUM fit with specific evidence |
+| 💼 Job Postings | Active roles as outsourcing intent signals — functions hiring, KServe-relevant openings, BD signal |
+| 🛠️ Technology Stack | CRM, support tool, review management tool, and marketing automation detected via BuiltWith/job postings |
+| ⭐ Reviews & Reputation | Five sub-sections: Product reviews, Service reviews, Employee reviews, General reputation, and Review Handling Methodology — each with sentiment trend (Improving/Worsening/Stable) |
+| 🎯 Overall Rating | Synthesized reputation score (1–10) with rationale and sample size caveat |
+| 🤝 KServe Fit | 3–5 services ranked HIGH/MEDIUM fit with explicit evidence; excluded services noted with reason |
+| 📈 ICP Score | Scored 0–100 across 10 dimensions; Tier 1–3 classification with recommended action |
 | 📞 Customer Care | Published support number (or absence as a BD signal) |
-| 📱 Social Media | Follower counts and engagement signal across platforms |
-| 📊 Tracxn Profile | Startup score, funding stage, investors |
-| 🔀 M&A & Funding | Recent acquisitions, funding rounds, PE activity |
-| 🧠 BD Briefing | Conversation starters, trigger signals, objection responses |
+| 📱 Social Media | Follower counts and platform-calibrated engagement signal |
+| 📊 Tracxn / Funding Profile | Tracxn score, Crunchbase employee count, per-round funding timeline, investor tier classification |
+| 🔀 M&A, Funding & Ownership | Recent acquisitions, PE ownership structure, GeM supplier status, fund vintage BD signal |
+| 🧠 BD Briefing | Things to know, conversation starters, trigger signals, objection responses, and Next Best Action |
 | 📝 Data Quality | Per-field confidence (HIGH/MED/LOW), source dates, data gaps |
 
 Every data point includes a source URL and freshness timestamp. High-stakes fields (turnover, directors) are MCA-verified.
@@ -78,4 +82,14 @@ skills/
 │   └── SKILL.md
 ```
 
-See [CHANGELOG.md](./CHANGELOG.md) for version history.
+See [CHANGELOG.md](./CHANGELOG.md) for version history and [CONTRIBUTING.md](./CONTRIBUTING.md) for contribution guidelines.
+
+## Versioning
+
+This package follows semantic versioning:
+
+| Bump | When to use |
+|---|---|
+| **Patch** (1.x.Y) | Typo fixes, instruction clarifications, Checker criteria wording |
+| **Minor** (1.X.0) | New sub-sections within an existing step, new Checker criteria, new output fields, new steps |
+| **Major** (X.0.0) | New skills added, workflow restructuring, breaking changes to output format |

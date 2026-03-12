@@ -53,9 +53,26 @@ Detect your execution mode before starting. Apply it consistently throughout.
 
 If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 
-**PARALLEL:** Spawn Workers 2–15 all at once after user confirms. Each Worker runs its own Checker loop. Orchestrator assembles the report once all Workers complete. Note: Step 10 (KServe Fit) depends on Steps 2–9 — spawn it last.
+**PARALLEL:** Spawn in two waves after user confirms.
 
-**SEQUENTIAL:** Run Steps 2–15 in order. Complete each Worker → Checker loop before advancing. Assemble and present the full report after Step 15.
+**Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14. Each Worker runs its own Checker loop independently.
+
+**Wave 2 — spawn only after ALL Wave 1 workers have been Checker-approved:** Worker 10 (KServe Fit). Step 10 reads the approved outputs from Steps 2–9 before executing. Do not spawn Worker 10 until Wave 1 is fully complete.
+
+Orchestrator assembles the final report once Worker 10 and all Wave 1 workers are complete.
+
+**PARALLEL — Progress reporting:** After spawning Wave 1, immediately post a status board to the user:
+```
+Research started for [Company Name]. Running 12 parallel workers:
+⏳ In progress: Steps 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14
+⏸️  Waiting to spawn: Step 10 (KServe Fit — starts after Wave 1 completes)
+I'll update you as sections complete.
+```
+As each Worker is approved by its Checker, post a one-line update: `✓ [Step name] complete — [1-phrase summary, e.g., "Turnover: ₹847 Cr FY24"]`
+
+When Wave 1 is fully complete: `Wave 1 complete. Spawning KServe Fit analysis (Step 10). Assembling final report…`
+
+**SEQUENTIAL:** Run Steps 2–15 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 15. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first, but in SEQUENTIAL mode this is naturally guaranteed. After Step 15, append the BD Briefing and DATA QUALITY footer to complete the report.
 
 Tool naming across platforms:
 - Web search: `web_search`, `WebSearch`, `search`, `browse`, or equivalent
@@ -93,7 +110,7 @@ Please confirm and I'll run the full research.
 Run all 14 research steps (Steps 2–15) using the execution mode detected above. Each step follows the **Worker → Checker → Orchestrator** pattern:
 
 1. **Worker** gathers data for that step using available web/search tools
-2. **Checker** validates the output against the five criteria (see Checker Instructions)
+2. **Checker** validates the output against the seven criteria (see Checker Instructions)
 3. If anything fails, Checker returns specific feedback to Worker — loop repeats
 4. Once approved, output passes to the **Orchestrator**
 5. **Orchestrator** assembles the final report once all steps are complete
@@ -120,6 +137,17 @@ Tofler, Zauba Corp, and similar aggregators pull from MCA and are acceptable sec
 
 **Graceful degradation.** If a tool or data source is unavailable, note it clearly in that section and move on. Never halt the entire report because one step hit a wall.
 
+**Rate-limited or gated sources.** If a source returns a 429, access-denied, or login-required response:
+1. Do not retry the same source more than once immediately.
+2. Switch to the next source in the Source Priority table for that step.
+3. Note in the report: `⚠️ [Source name] access denied/rate-limited — [fallback source] used instead.`
+4. If ALL sources for a step are gated: flag the step as `RETRY_EXHAUSTED` with reason "all sources gated" and move on without loop-retrying.
+
+Commonly gated sources — handle proactively:
+- **Tracxn:** Check the public company URL first (often accessible); only flag gated if you hit a login wall on the detail page.
+- **LinkedIn:** Company page follower count and basic info are publicly visible without login. Individual profiles may be limited. Job posting counts on LinkedIn Jobs are public without login.
+- **MCA AOC-4 filings:** Full Annual Return sometimes requires Tofler or Zauba Corp as proxy — this is expected behavior, not a failure.
+
 **Zero results = explicit statement.** If a web search returns no results for a required field, write "Not publicly available" or "No results found" in the report. Never fill a gap by inferring from adjacent context, similar companies, or general knowledge. An acknowledged gap is always more trustworthy than an unverified inference — and an incorrect data point handed to BD is actively harmful.
 
 ---
@@ -135,15 +163,19 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 4 — Head Office | MCA registered address | Company website | Google Maps Business listing |
 | 5 — Years in Existence | MCA company master data | Company website (Our Story / About) | LinkedIn Founded year · Wikipedia |
 | 6 — Directors | MCA director listing | Tofler | Company website (Leadership) · LinkedIn |
+| 6B — Dossiers | LinkedIn profiles of ★-flagged directors | Company website bio · News/conference mentions | Mark Lines 2–3 as "Not accessible" if LinkedIn profile is private |
 | 7 — Branches | Company website | Google Maps | News · LinkedIn (employees by location) |
+| 7B — Job Postings | Naukri (site:naukri.com "[company]") | LinkedIn Jobs · Indeed India | Company careers page |
+| 7C — Tech Stack | BuiltWith · Wappalyzer | Job posting tech mentions | Company website footer vendor tags |
 | 8 — Reviews | Google Business · Trustpilot · AmbitionBox · Glassdoor | Amazon · Flipkart · App Store · Google Play · Justdial | AppFollow · AppBot (app reviews) · job postings (Step 8E tool detection only) |
-| 9 — Rating | Synthesized from Step 8 output | — | — |
-| 10 — KServe Fit | Synthesized from Steps 2–9 output | — | — |
+| 9 — Rating | Synthesized from Step 8 output | — | If Step 8 produced < 15 total reviews across all platforms, mark rating Confidence: LOW and note sample size. If zero reviews, write "Rating: N/A". |
+| 10 — KServe Fit | Synthesized from Steps 2–9 output (Wave 1 must be fully complete) | — | If Step 10 is RETRY_EXHAUSTED, Step 15 must omit Section C (Trigger Signals). |
+| 10B — ICP Score | Synthesized from Steps 2–10 output — no new searches | — | If Step 7B was not run, assign 3/10 for job postings dimension with note "Step 7B not run". |
 | 11 — Customer Care | Company website | Google Business · Justdial | App Store / Play Store listing |
 | 12 — Social Media | Direct platform search (LinkedIn, Instagram, Facebook, X, YouTube) | Social Blade (trends) | Company website social links |
-| 13 — Tracxn | Tracxn.com | Crunchbase (fallback if Tracxn locked) | — |
-| 14 — M&A | News (last 12 months) | Tracxn · Crunchbase · MCA filings | ET · Mint · Business Standard |
-| 15 — BD Briefing | Synthesized from Steps 2–14 output — no new searches | — | — |
+| 13 — Tracxn | Tracxn.com | Crunchbase (always check as secondary for employee count + funding timeline) | — |
+| 14 — M&A | News (last 12 months) | Tracxn · Crunchbase · MCA filings · gem.gov.in | ET · Mint · Business Standard |
+| 15 — BD Briefing | Synthesized from Steps 2–14 output — no new searches | — | If ≥ 4 steps exhausted retries, open with partial-data warning. If Step 10 is RETRY_EXHAUSTED, omit Trigger Signals. If Step 8 RETRY_EXHAUSTED, skip review-based Conversation Starters. |
 
 ---
 
@@ -181,13 +213,88 @@ Find the incorporation / founding year. Calculate age from today.
 
 Pull current directors from MCA. For each: Full name · Designation (MD, Director, Independent Director, etc.) · DIN (Director Identification Number).
 
-For BD outreach, identify for BD outreach: directors likely to be decision-makers for outsourcing (MD, COO, CFO, VP Operations).
+For BD outreach, flag directors likely to be decision-makers for outsourcing: MD, COO, CFO, VP Operations. Mark each with a star (★) to distinguish from board/independent directors.
+
+**LinkedIn lookup (for ★-flagged directors only):** Search `"[Full name]" "[Company name]" LinkedIn` for each BD-relevant director. Record:
+- LinkedIn profile URL (if publicly accessible)
+- Tenure at this company (from LinkedIn experience section)
+- Last post or activity date (if public)
+- Flag `★ NEW` if appointed/joined within the last 6 months — a new MD, COO, or CFO is a high-value trigger (new leadership re-evaluates vendor relationships)
+
+If LinkedIn is not accessible for a director: write `LinkedIn: Not publicly accessible`.
+
+**Output format for directors:**
+`★ [Name] — [Designation] — DIN: [XXXXXXXX] — LinkedIn: [URL or "Not accessible"] — Tenure: [X years / ★ NEW (<6 months)]`
+`[Name] — [Designation] — DIN: [XXXXXXXX]` (for non-BD-relevant directors, no LinkedIn lookup needed)
+
+---
+
+### Step 6B — Decision-Maker Dossiers
+
+For each ★-flagged BD-relevant director whose LinkedIn profile is publicly accessible, produce a 3-line brief:
+
+- **Line 1 — Background:** Previous 2–3 companies and roles (from LinkedIn experience). Industry experience duration. Any notable career inflection (e.g., "former McKinsey Principal — transitioned to operational roles in BFSI").
+- **Line 2 — LinkedIn activity:** Last post or like date (if visible). Content themes of recent public posts (e.g., "posts about operational scaling and team culture"). If no public activity: `No public LinkedIn activity visible.`
+- **Line 3 — Likely first objection:** Based on their background, what is the most probable pushback to a KServe pitch? (e.g., ex-McKinsey CFO: "will demand ROI data upfront and cost-per-unit comparison"; founder-CEO of bootstrapped startup: "trust and control concerns — prefers to start with a pilot"; career ops leader: "will ask about SLA guarantees and transition risk")
+
+If LinkedIn is not publicly accessible for a director: produce Line 1 only from public sources (company website bio, news articles, conference speaking history). Mark Lines 2–3 as `Not accessible`.
+
+Do not speculate on personal information beyond professional public record.
 
 ---
 
 ### Step 7 — Branches & Offices
 
 Find: total number of offices/branches/locations · key cities/states · any international presence.
+
+---
+
+### Step 7B — Job Postings (Outsourcing Intent Signals)
+
+Search for active job postings to reveal what functions the company is actively trying to fill — a direct signal of where they have resource gaps KServe can address.
+
+**Sources (try in order):**
+1. `site:naukri.com "[company name]"` — primary for Indian companies
+2. LinkedIn Jobs: `"[company name]"` filter by India
+3. Indeed India · Company careers page
+
+**Find:**
+- Approximate number of open roles (not exact — a range is fine, e.g., "15–20 open roles")
+- Top 3 functions with the most open roles (e.g., "Customer Support: 12, Back-Office: 5, Collections: 4")
+- Keywords in JDs that signal outsourcing pain: "manage high volume," "handle escalations," "coordinate with outsourcing vendor," "work with BPO partner," "process-driven," "high-throughput"
+- Roles that directly match KServe's services: Customer Service agents, Collections executives, Lead Generation reps, Data Entry / Back-Office Processing staff, Market Research analysts
+
+**BD framing:** List 2–3 open roles most directly relevant to KServe's services:
+Format: `[Role title] — [KServe service match] — [approximate count or "multiple"]`
+Then: 1-sentence BD signal — what does this hiring pattern imply about the company's current resourcing pressure?
+
+**If no public job postings found:** Write `No active job postings found on Naukri, LinkedIn Jobs, or Indeed India as of [date]. Company may not be publicly recruiting, or postings may be behind a login wall.`
+
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+---
+
+### Step 7C — Technology Stack
+
+Search for what technology tools the company uses — reveals digital maturity, existing vendor relationships, and integration opportunities for KServe.
+
+**Sources (try in order):**
+1. BuiltWith (builtwith.com) — enter company domain
+2. Wappalyzer (wappalyzer.com) — enter company domain
+3. Job postings: look for technology mentions in JD requirements (e.g., "experience with Salesforce CRM," "proficient in Zendesk")
+4. Company website footer: check for cookie/analytics vendor tags, embedded chat widget vendor logos
+
+**Find:**
+- CRM in use (Salesforce, HubSpot, Zoho, LeadSquared, etc.) — KServe can operate within these
+- Customer support tool (Zendesk, Freshdesk, Intercom, etc.) — KServe's CS team plugs in without migration
+- Review management tool (cross-reference Step 8E findings)
+- Marketing automation platform (signals marketing team maturity and data readiness)
+
+**BD framing:** For each tool found: `[Tool] detected — KServe integrates natively with this stack; no migration required.`
+
+**If no tech stack data accessible:** Write `Tech stack not publicly detectable via BuiltWith, Wappalyzer, or job postings as of [date].`
+
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 ---
 
@@ -225,6 +332,14 @@ Find:
 - If no app found: write `No consumer app found — app review not applicable` and document the search query used
 - If app found but reviews are gated: write `App found ([name] — [rating]/5 on [platform]) but individual review content is gated`
 
+**Sentiment trend (12-month window):** After gathering themes, assess directional trend by sorting visible reviews from oldest to newest. Classify as:
+- `Improving` — negative themes decreasing, positive themes increasing over the window
+- `Worsening` — opposite pattern
+- `Stable` — no clear directional shift
+- `Insufficient data` — fewer than 10 reviews in the 12-month window
+
+Include in output: `Trend: [Improving / Worsening / Stable / Insufficient data] — [1-sentence observation, e.g., "Complaints about app crashes spiked in Q3 2025 and have partially subsided in Q4"]`
+
 BD framing: what does product/app quality feedback signal about operational gaps KServe can address?
 
 ---
@@ -242,6 +357,8 @@ Find:
 - Recurring themes in customer service feedback: response time, resolution quality, staff attitude
 - Specific complaints about support channels (phone, chat, email, in-store)
 - Platforms checked with review count and date range
+
+**Sentiment trend (12-month window):** Same method as Section A — classify as Improving / Worsening / Stable / Insufficient data, with a 1-sentence observation.
 
 BD framing: where does customer service break down? This maps directly to KServe's Customer Service offering.
 
@@ -298,7 +415,7 @@ Look for evidence of:
 | Third-party review tools | Job postings: `[company] "Birdeye" OR "Yotpo" OR "Respond.io" OR "Medallia" OR "ReviewTrackers"`; BuiltWith / G2 integrations |
 | Automated vs manual | Identical boilerplate across reviews = likely automated; named agent sign-off + review-specific language = manual |
 | Response rate | From reviews examined: High (>60%) / Medium (20–60%) / Low (<20%) / None — always note sample size (e.g., "based on 12 reviews examined") |
-| Response speed | Timestamp lag between review and reply: <24h / 1–7 days / >7 days / Inconsistent / Not determinable |
+| Response speed | Timestamp lag between review and reply: <24h / 1–7 days / >7 days / Inconsistent / Not determinable. **Determining speed:** Look for timestamp pairs (review date + company reply date) on the same review — often visible on Google Business, Glassdoor, and App Store. If even 3 pairs are visible, compute the average lag and assign a category. Only use "Not determinable" if timestamp pairs are not visible on ANY of 3+ platforms checked. |
 
 Synthesize into:
 - Response channel(s) used
@@ -328,6 +445,8 @@ Assign a synthesized reputation score — NOT an average of star ratings. Base i
 
 Provide a 2–3 sentence rationale. Note: a lower score often signals more BPO opportunity for KServe.
 
+**Sample size caveat:** If fewer than 15 total reviews were found across all Step 8 platforms combined, note in the rationale: `⚠️ Low sample: score based on [N] total reviews across [platforms] — Confidence: LOW. Treat as directional only.` If zero reviews were found across all platforms: write `Rating: N/A — insufficient review data. Confidence: LOW.`
+
 ---
 
 ### Step 10 — KServe Services Fit
@@ -339,7 +458,11 @@ Based on the full research picture, recommend **3–5 services** (not all 8) wit
 - ⭐ **HIGH FIT** — service directly addresses a visible pain point found in reviews or news
 - ✅ **MEDIUM FIT** — service aligns with company strategy, size, or industry norms
 
-Omit LOW FIT services entirely — only include what is genuinely relevant.
+**Decision rules:**
+- **HIGH FIT requires at least ONE of:** (a) explicit pain-point evidence in Step 8 reviews/news, (b) open job requisitions in that function found in research, (c) a specific recent event (funding, expansion, leadership change) that makes the service directly timely.
+- **MEDIUM FIT requires at least ONE of:** (a) industry norm (e.g., NBFCs typically need Collection services), (b) company size signals that make the service plausible, (c) absence of an obvious in-house function (e.g., no published customer care number signals underdeveloped CS).
+- **Exclude a service entirely** (do not list it) if the company's size or business model makes it implausible (e.g., a 10-person bootstrapped startup does not need Collection services; a pure B2G company rarely needs Lead Generation).
+- At the end of the KServe Fit section, add one line: `Excluded: [Service] — [reason] · [Service] — [reason]` (only for excluded services, not all 8).
 
 Format each as: `[Service] — [Fit level] — [Specific evidence from research]`
 
@@ -356,6 +479,55 @@ could accelerate market entry without growing headcount.
 
 ---
 
+### Step 10B — ICP Score (Ideal Customer Profile Score)
+
+**Depends on:** Steps 2–10 (all prior research). In PARALLEL mode, run this step alongside Worker 10 (Wave 2), but only after Wave 1 is complete. In SEQUENTIAL mode, run after Step 10 is approved.
+
+**Do not run new web searches.** Use only data from prior approved steps.
+
+Compute a scored Ideal Customer Profile rating (0–100) for this company as a KServe prospect. Score each dimension:
+
+| Dimension | Signal (from step) | Max pts | Scoring |
+|---|---|---|---|
+| Industry match | Does the company operate in KServe's target industry list? (Step 2) | 15 | Exact match: 15 · Adjacent/related: 8 · No match: 0 |
+| Revenue band | Turnover band (Step 3) | 10 | ₹50–500 Cr: 10 · ₹10–50 Cr or ₹500–2,000 Cr: 6 · <₹10 Cr (too small) or >₹5,000 Cr (enterprise complexity): 2 · Not disclosed: 4 |
+| Employee headcount proxy | Estimated from turnover, branch count, hiring signals (Steps 3, 7, 7B) | 10 | 50–2,000 employees: 10 · <50 or 2,000–5,000: 5 · >5,000 or unknown: 2 |
+| Pain point evidence | HIGH FIT services from Step 10 | 15 | ≥1 HIGH FIT: 15 · MEDIUM FIT only: 8 · No fit found: 0 |
+| Review quality signal | Step 9 rating | 10 | Rating 1–4 (acute pain, high BPO need): 10 · 5–6 (moderate need): 7 · 7–10 (low pain): 3 · N/A: 4 |
+| Growth / change signal | M&A, funding, leadership change, expansion (Steps 14, 6) | 10 | Active growth/change: 10 · Stable: 5 · Contraction/freeze signal: 2 |
+| Decision-maker accessibility | BD-relevant director with LinkedIn profile accessible (Step 6) | 10 | ≥1 accessible: 10 · None accessible: 3 |
+| Job postings in KServe service areas | Active openings in CS, Collections, Back-Office, Lead Gen (Step 7B) | 10 | Active openings found: 10 · No postings found: 5 · Step not run: 3 |
+| Social presence | Active posting + meaningful follower base (Step 12) | 5 | Active (≥2×/month + above-threshold engagement): 5 · Inactive or very small: 0 |
+| Data confidence | Average confidence across Steps 2–9 (Step DATA QUALITY tally) | 5 | Mostly HIGH: 5 · Mixed: 3 · Mostly LOW/MED: 0 |
+
+**Total: 100 points**
+
+**Tier thresholds:**
+- **75–100 — Priority Tier 1:** Assign senior AE; outreach within 48 hours
+- **50–74 — Tier 2:** SDR outreach; standard sequence
+- **25–49 — Tier 3:** Nurture list; revisit in 60 days
+- **0–24 — Deprioritize:** Flag to BD manager with rationale; do not assign AE
+
+Format output as:
+```
+📈 ICP SCORE: [XX/100] — [Tier 1 / Tier 2 / Tier 3 / Deprioritize]
+Score breakdown:
+  Industry match: [X/15] — [reason]
+  Revenue band: [X/10] — [reason]
+  Employee proxy: [X/10] — [reason]
+  Pain point evidence: [X/15] — [reason]
+  Review quality: [X/10] — [reason]
+  Growth/change: [X/10] — [reason]
+  Decision-maker access: [X/10] — [reason]
+  Job postings: [X/10] — [reason]
+  Social presence: [X/5] — [reason]
+  Data confidence: [X/5] — [reason]
+Primary drivers: [top 2 dimensions that most influenced the score]
+Recommended action: [48h AE outreach / SDR sequence / Nurture / Deprioritize]
+```
+
+---
+
 ### Step 11 — Customer Care Number
 
 Find their publicly listed customer support / helpline number.
@@ -368,10 +540,22 @@ BD insight: presence of a published number signals a formal support structure. A
 
 Pull current follower counts: LinkedIn · Instagram · Facebook · Twitter/X · YouTube (if applicable).
 
-Engagement signal (check the main platform — LinkedIn for B2B):
-- Review last 5–10 posts
-- Note if engagement rate appears low (<2% likes+comments/followers) or posting frequency is sparse (<1×/month)
-- Flag low engagement in report as: `Low engagement — [platform]: [observation]`
+Engagement signal (check the main platform — LinkedIn for B2B, Instagram for B2C):
+- Review last 5–10 posts on the primary platform.
+- Calculate observed engagement rate: (total likes + comments on sampled posts) ÷ (posts sampled × follower count).
+- Apply platform-calibrated thresholds:
+
+| Platform | Low engagement flag |
+|---|---|
+| LinkedIn (company page) | < 0.5% |
+| Instagram | < 1.5% |
+| Facebook | < 0.5% |
+| Twitter/X | < 0.3% |
+
+- Flag low engagement as: `Low engagement — [platform]: [engagement rate]% (based on [N] posts sampled)`
+- Flag if posting frequency is < 2×/month across all active platforms.
+- If follower count is below 1,000 on all platforms: write `Low follower base (< 1,000 on all platforms) — engagement rate not meaningful; flag as early-stage social presence.`
+- Note sample size: `Engagement rate calculated on [N] posts as of [date]`
 
 ---
 
@@ -383,21 +567,44 @@ If company is not on Tracxn (common for traditional/non-VC companies): note in r
 
 If Tracxn profile requires a paid subscription to view detail: note in report `Tracxn profile exists but detail is gated.`
 
+**Crunchbase depth (use as secondary source or Tracxn fallback):**
+- Employee count range (Crunchbase shows this for most companies, even private): e.g., `51–200 employees`
+- Funding timeline: list each round with date, amount, and lead investor
+- Total funding raised to date
+- Investor tier: classify lead investor as **Tier 1** (Sequoia, Accel, Lightspeed, SoftBank, Tiger Global), **Tier 2** (regional/corporate VC, family office), or **Bootstrapped/Angel**
+
+**BD signal from funding profile:**
+- Tier 1 backed = high growth pressure, active scaling, likely receptive to outsourcing
+- Recent Series B/C without profitability signal = cost-consciousness may push back on new spend; lead with ROI
+- Bootstrapped = founder is the decision-maker, single-call close possible; trust-building is priority
+- Late-stage PE fund (vintage >5 years) = exit pressure, cost optimization is top of mind
+
 ---
 
 ### Step 14 — Acquisitions & M&A Activity
 
 Search for any recent (last 12 months preferred): acquisitions · being acquired · mergers · major investment rounds · PE/VC backing changes.
 
+**Additional searches:**
+- **Government contracts:** Search `gem.gov.in "[company name]"` — note if they are an active GeM (Government e-Marketplace) supplier. This signals compliance maturity, longer procurement timelines, and that the company operates in regulated environments. BD implication: open with compliance and documentation-quality credentials.
+- **PE ownership depth:** If Tracxn or Crunchbase shows PE backing, search for the PE firm's portfolio page. Note: PE firm name · stake held (majority/minority/not specified) · fund vintage year. **Fund vintage BD signal:** A PE fund 6+ years into a typical 10-year cycle is approaching exit horizon — cost reduction programs are usually underway; outsourcing is a direct lever.
+
 BD signals:
 - Being acquired → may freeze vendor decisions (note in report)
 - Fresh funding raised → likely expanding, open to outsourcing (highlight as trigger signal for Step 15)
+- GeM supplier → compliance-driven, longer sales cycle, pitch with documentation accuracy and audit trails
+- Late-stage PE backing → cost reduction is a stated goal; lead with cost-per-transaction vs. in-house comparison
 
 ---
 
 ### Step 15 — BD Intelligence Briefing
 
 **Most important step.** Synthesize findings from Steps 2–14 into actionable outreach intel. **Do not run new web searches** — use only what was gathered in prior steps.
+
+**QUALITY GATE — Before synthesizing, the Step 15 Worker must:**
+1. Count `RETRY_EXHAUSTED` signals from prior steps. If **4 or more** steps exhausted retries, open the BD Briefing section with: `⚠️ Partial data warning: [N] research steps returned best-available data only. The briefing below reflects current research confidence — validate key points before outreach.`
+2. If **Step 10 (KServe Fit) is RETRY_EXHAUSTED or missing**, omit Section C (Trigger Signals) entirely. Replace with: `Trigger signals omitted — KServe Fit data unavailable. Re-run Step 10 before outreach.`
+3. If **Step 8 (Reviews) is RETRY_EXHAUSTED**, omit review-based Conversation Starters from Section B. Use funding, expansion, or leadership hooks from Steps 14/6 only.
 
 **A. Things to Know Before Reaching Out** (3–5 bullet points)
 Current strategic focus · key decision-makers · recent challenges visible in research.
@@ -422,6 +629,20 @@ Select the most compelling from:
 Based on company profile, anticipate likely pushbacks and provide a suggested KServe response for each.
 
 If a review management tool was detected in Step 8E, anticipate: *"We already use [tool] to manage reviews."* Suggested response: *"That's exactly the setup we integrate with — KServe handles the human judgment layer (response drafting, escalation routing) within your existing tool. You keep the tech stack, we remove the headcount burden."*
+
+**E. Next Best Action** (exactly one recommendation)
+
+Synthesize all research into a single, specific, ranked action for the BD rep. This is a decision, not a summary.
+
+Format: `[Do X] — [because Y] — [contact: {named director from Step 6}] — [via: {LinkedIn InMail / phone / email}] — [hook: {specific finding from research}]`
+
+Example: *"Call Priya Mehta (CFO, LinkedIn: accessible) within 48 hours — 3 open Collections executive roles on Naukri signal active scaling pressure; lead with: 'We've helped 4 NBFCs build their collections function in 90 days without the compliance risk of in-house hiring.'"*
+
+**Decision rules:**
+- The action must reference at least ONE specific finding from research (not a generic claim)
+- The contact must be a named director from Step 6 with LinkedIn accessible — not a generic "operations head"
+- The outreach channel must be specific (LinkedIn InMail / phone / email — not "reach out")
+- If ICP Score (Step 10B) is Tier 3 or Deprioritize: action = `Add to [60-day / 90-day] nurture sequence — do not assign AE yet. Monitor for: [specific trigger to watch, e.g., next funding round announcement, next Glassdoor spike]`
 
 ---
 
@@ -456,13 +677,34 @@ Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 👔 DIRECTORS
-[Name — Designation — DIN]
-[Name — Designation — DIN]
+★ [Name] — [Designation] — DIN: [XXXXXXXX] — LinkedIn: [URL or "Not accessible"] — Tenure: [X years / ★ NEW (<6 months)]
+[Name] — [Designation] — DIN: [XXXXXXXX]
 Source(s): [MCA URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
+
+🧑‍💼 DECISION-MAKER DOSSIERS
+★ [Name] — [Designation]
+  Background: [previous companies / roles / industry tenure]
+  LinkedIn activity: [last post date + content themes / "No public activity visible"]
+  Likely first objection: [specific pushback based on background]
+[Repeat for each ★-flagged director with accessible LinkedIn]
+Source(s): [LinkedIn URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 🗺️ BRANCHES & OFFICES
 [X locations | Key cities]
 Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
+
+💼 JOB POSTINGS (Intent Signals)
+Open roles: ~[N] | Top functions: [e.g., Customer Support: 12, Back-Office: 5, Collections: 4]
+KServe-relevant openings:
+  [Role title] — [KServe service match] — [count]
+BD signal: [what this hiring pattern implies about resourcing pressure]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+🛠️ TECHNOLOGY STACK
+CRM: [Tool / Not detected] | Support tool: [Tool / Not detected] | Review tool: [Tool / Not detected (see 8E)]
+Marketing automation: [Tool / Not detected]
+BD framing: [integration angle]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 ⭐ REVIEWS & REPUTATION (Last 12 months)
 
@@ -471,6 +713,7 @@ Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 [Repeat for each platform checked:] Platform — Rating — Review count — URL
 Top critical themes: ...
 Top positive themes: ...
+Trend: [Improving / Worsening / Stable / Insufficient data (<10 reviews)] — [1-sentence observation]
 App:
   [Found]: [name] | [iOS / Android / Both] | [X.X]/5 ([X,XXX] ratings)
     Sample critical: "[verbatim ≤40 words]" — [reviewer] — [YYYY-MM-DD] | [URL]
@@ -486,6 +729,7 @@ Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
 [Repeat for each platform checked:] Platform — Rating — Review count — URL
 Top positives: ...
 Top negatives: ...
+Trend: [Improving / Worsening / Stable / Insufficient data] — [1-sentence observation]
 Notable signal: [e.g., "No case studies found — signals limited B2B social proof" / "N/A"]
 BD signal: [what this means for KServe's Customer Service pitch]
 Confidence: HIGH/MED/LOW | Most recent: YYYY-MM-DD
@@ -520,6 +764,15 @@ Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🤝 KSERVE FIT ASSESSMENT
 [Service — Fit level — Evidence]
+Excluded: [Service — reason] · [Service — reason]
+
+📈 ICP SCORE: [XX/100] — [Tier 1 / Tier 2 / Tier 3 / Deprioritize]
+Score breakdown:
+  Industry match: [X/15] · Revenue band: [X/10] · Employee proxy: [X/10]
+  Pain point evidence: [X/15] · Review quality: [X/10] · Growth/change: [X/10]
+  Decision-maker access: [X/10] · Job postings: [X/10] · Social presence: [X/5] · Data confidence: [X/5]
+Primary drivers: [top 2 dimensions]
+Recommended action: [48h AE outreach / SDR sequence / Nurture / Deprioritize]
 
 📞 CUSTOMER CARE NUMBER
 [Number or "Not published"] | Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
@@ -528,12 +781,17 @@ Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 LinkedIn: X | Instagram: X | Facebook: X | Twitter/X: X | YouTube: X
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
-📊 TRACXN PROFILE
-[Score / Not listed / Gated]
-Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
+📊 TRACXN / FUNDING PROFILE
+Tracxn: [Score X/100 / Not listed / Gated] | Stage: [Seed / Series A / etc. / N/A] | Badges: [list or "None"]
+Crunchbase: Employees: [range] | Total funding: [$X / Not disclosed] | Last round: [Series X — $X — Date — Lead investor — Tier 1/2/Bootstrapped]
+BD signal: [funding stage implication for outsourcing receptivity]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
-🔀 M&A & FUNDING ACTIVITY
-[Summary or "No recent M&A activity found"]
+🔀 M&A, FUNDING & OWNERSHIP
+[Summary of recent M&A/funding or "No recent M&A activity found"]
+GeM supplier: [Yes — active / No / Not checked]
+PE ownership: [PE firm — stake — fund vintage year / Not applicable]
+BD signal: [ownership/funding implication]
 Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🧠 BD INTELLIGENCE BRIEFING
@@ -549,6 +807,9 @@ Trigger Signals:
 
 Potential Objections:
 • [Objection] → [Suggested response]
+
+Next Best Action:
+[Do X] — [because Y] — [contact: Named Director] — [via: LinkedIn InMail / phone / email] — [hook: specific research finding]
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📝 DATA QUALITY
@@ -569,31 +830,31 @@ Confidence key: HIGH = MCA-verified or 2+ independent sources · MED = single cr
 ```
 User confirms company (Step 1)
          │
+         ▼ POST PROGRESS STATUS BOARD
+┌─────────────────────────────────────────────────────┐
+│    WAVE 1 — SPAWN SIMULTANEOUSLY                    │
+│  Workers: 2, 3, 4, 5, 6, 6B, 7, 7B, 7C             │
+│           8, 9*, 11, 12, 13, 14                     │
+│  (*Step 9 waits for Step 8 internally)              │
+│  Post ✓ update after each worker approved           │
+└─────────────────────────────────────────────────────┘
+         │ (each worker ↔ checker loop — 7 criteria)
+         ▼ POST "Wave 1 complete. Spawning Step 10…"
+┌─────────────────────────────────────────────────────┐
+│    WAVE 2 — SPAWN AFTER ALL WAVE 1 APPROVED         │
+│  Workers: 10 (KServe Fit), 10B (ICP Score)          │
+│  Read approved outputs from Steps 2–9               │
+└─────────────────────────────────────────────────────┘
+         │ (Wave 2 ↔ checker loop)
          ▼
-┌─────────────────────────────────────────┐
-│    SPAWN SIMULTANEOUSLY (Steps 2–9, 11–14)   │
-│  Worker-2   Worker-3   Worker-4  ...    │
-│  Worker-5   Worker-6   Worker-7  ...    │
-│  Worker-8   Worker-9   Worker-11 ...    │
-│  Worker-12  Worker-13  Worker-14        │
-│  (Step 10 spawns last — needs 2–9)      │
-└─────────────────────────────────────────┘
-         │ (each worker ↔ checker loop)
-         ▼
-┌─────────────────────────────────────────┐
-│      CHECKER (per worker)               │
-│  Validates: source · credibility ·      │
-│  recency · accuracy · completeness      │
-│  Returns to worker if any fail          │
-└─────────────────────────────────────────┘
-         │ (all approved outputs)
-         ▼
-┌─────────────────────────────────────────┐
-│         ORCHESTRATOR                    │
-│  Assembles all 14 approved sections     │
-│  Validates completeness of report       │
-│  Renders final BD Research Report       │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│         ORCHESTRATOR                                │
+│  Verify Step 10 ran after Wave 1 complete           │
+│  Assemble all approved sections in order            │
+│  Validate completeness · Tally confidence           │
+│  Collect RETRY_EXHAUSTED signals                    │
+│  Render final BD Research Report                    │
+└─────────────────────────────────────────────────────┘
 ```
 
 ### SEQUENTIAL MODE
@@ -620,7 +881,7 @@ User confirms company (Step 1)
 
 ## Checker Instructions
 
-When validating any Worker output, apply all five criteria:
+When validating any Worker output, apply all seven criteria:
 
 1. **Source present?** Every fact must have a URL or named document. No source → send back.
 2. **Source credible?** Prefer official sources (MCA, company website, major publications) over anonymous forums or low-quality aggregators.
@@ -664,8 +925,9 @@ Only approve when all seven criteria are met (or a ⚠️ note and/or `RETRY_EXH
 After all 14 Workers complete and each Checker has approved:
 
 1. Assemble all approved sections into the Output Format template in order
-2. Validate: no field is blank, pending, or "TBD" without a "Not publicly available" statement or a ⚠️ flag
-3. If any section is missing or incomplete, return to that step's Checker with a re-request before rendering
-4. Collect all `RETRY_EXHAUSTED` signals received from Checkers. If any exist, populate the "Data gaps" line in the 📝 DATA QUALITY footer with: `[Step N — field] — [reason]` for each one. If none, write "None".
-5. Tally confidence levels across all 14 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/14 HIGH · 3 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".
-6. Render the final report for presentation to the user
+2. **Before assembling Step 10 (KServe Fit):** verify that approved outputs from ALL of Steps 2–9 are present. If any Wave 1 step is still pending, wait. If a Step 10 Worker ran before Steps 2–9 were all approved, discard that output and re-request Step 10 with the full approved Wave 1 context.
+3. Validate: no field is blank, pending, or "TBD" without a "Not publicly available" statement or a ⚠️ flag
+4. If any section is missing or incomplete, return to that step's Checker with a re-request before rendering
+5. Collect all `RETRY_EXHAUSTED` signals received from Checkers. If any exist, populate the "Data gaps" line in the 📝 DATA QUALITY footer with: `[Step N — field] — [reason]` for each one. If none, write "None".
+6. Tally confidence levels across all 14 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/14 HIGH · 3 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".
+7. Render the final report for presentation to the user

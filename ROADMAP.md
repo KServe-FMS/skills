@@ -8,38 +8,38 @@ Checklist of improvements to elevate the skill to enterprise grade. Items are gr
 
 ### New Data Modules (new steps)
 - [ ] **Employee Headcount & Growth Trend** — LinkedIn `#employees` over time; signals scaling pain or hiring freeze
-- [ ] **Technology Stack Detection** — BuiltWith/Wappalyzer + job postings to detect CRMs, ERPs, cloud providers; reveals digital maturity and integration opportunities
+- [x] **Technology Stack Detection** — BuiltWith/Wappalyzer + job postings to detect CRMs, ERPs, cloud providers; reveals digital maturity and integration opportunities *(shipped: Step 7C)*
 - [ ] **Current Outsourcing Vendors** — detect competitors already embedded via news/announcements; changes the pitch angle entirely
-- [ ] **Job Postings as Intent Signals** — live roles on Naukri/LinkedIn reveal what they're hiring vs. what KServe could replace or augment
+- [x] **Job Postings as Intent Signals** — live roles on Naukri/LinkedIn reveal what they're hiring vs. what KServe could replace or augment *(shipped: Step 7B)*
 - [ ] **Regulatory & Legal Risk** — MCA compliance defaults, consumer court cases, SEBI/RBI notices; distress is both risk and opportunity
 - [ ] **Competitive Landscape** — top 3 competitors; positions KServe to cite relevant case studies
 - [ ] **Key Partnerships & Integrations** — strategic alliances signal direction and potential entry points
 - [ ] **Import/Export Data** — Zauba/Volza trade activity; relevant for logistics and supply chain verticals
 
 ### Depth Improvements to Existing Steps
-- [ ] **Step 6 — Directors** — add LinkedIn profile URLs, tenure, career history, and public quotes; currently only static MCA data
-- [ ] **Step 8 — Reviews** — add sentiment trend over time (improving or worsening?), not just themes; a worsening trend is a stronger trigger signal
+- [x] **Step 6 — Directors** — add LinkedIn profile URLs, tenure, career history, and public quotes; currently only static MCA data *(shipped: Enhancement 2.1 + Step 6B)*
+- [x] **Step 8 — Reviews** — add sentiment trend over time (improving or worsening?), not just themes; a worsening trend is a stronger trigger signal *(shipped: Enhancement 2.3)*
 - [ ] **Step 12 — Social Media** — add posting frequency trend, content themes, and paid ad activity via Facebook Ad Library
-- [ ] **Step 13 — Tracxn** — add Crunchbase employee count, funding timeline, and investor tier classification; currently too shallow
-- [ ] **Step 14 — M&A** — extend to government contracts/tenders (GEM portal) and PE ownership structure
+- [x] **Step 13 — Tracxn** — add Crunchbase employee count, funding timeline, and investor tier classification; currently too shallow *(shipped: Enhancement 2.4)*
+- [x] **Step 14 — M&A** — extend to government contracts/tenders (GEM portal) and PE ownership structure *(shipped: Enhancement 2.5)*
 
 ---
 
 ## Phase 2 — BD Intelligence
 
-- [ ] **ICP Scoring** — quantified Ideal Customer Profile score (1–100) combining company size, industry match, pain points, growth signals, and tech maturity; gives BD a ranked priority list
-- [ ] **Account Tiering** — classify as Tier 1 / 2 / 3 with explicit criteria so BD knows whether to assign a senior AE or an SDR
+- [x] **ICP Scoring** — quantified Ideal Customer Profile score (1–100) combining company size, industry match, pain points, growth signals, and tech maturity; gives BD a ranked priority list *(shipped: Step 10B)*
+- [x] **Account Tiering** — classify as Tier 1 / 2 / 3 with explicit criteria so BD knows whether to assign a senior AE or an SDR *(shipped: Step 10B tier thresholds)*
 - [ ] **Deal Size Estimation** — estimate outsourcing contract value range based on headcount, revenue, and service fit; helps BD prioritize pipeline
 - [ ] **BANT Pre-qualification** — Budget (revenue/funding), Authority (director mapping), Need (pain points/jobs), Timeline (growth events); structured for CRM entry
-- [ ] **Decision-Maker Dossiers** — for each BD-relevant director, a 3-line brief: background, LinkedIn activity pattern, likely objection
+- [x] **Decision-Maker Dossiers** — for each BD-relevant director, a 3-line brief: background, LinkedIn activity pattern, likely objection *(shipped: Step 6B)*
 - [ ] **Personalized Outreach Templates** — one email draft per top decision-maker using research findings as hooks, not generic copy
 - [ ] **Competitive Positioning** — if they already use a competitor BPO, provide differentiation angle; currently the skill ignores competitive context
 - [ ] **Expanded Objection Bank** — Step 15D caps at 2–3; extend to cover cost, trust, data security, cultural fit, and incumbent vendor loyalty
-- [ ] **Next Best Action** — a single ranked recommendation at the top of the report synthesizing all research into one concrete action (e.g., "Call the COO first — 3 open CX JDs on Naukri")
+- [x] **Next Best Action** — a single ranked recommendation at the top of the report synthesizing all research into one concrete action (e.g., "Call the COO first — 3 open CX JDs on Naukri") *(shipped: Step 15E)*
 
 ---
 
-## Phase 3 — Data Quality & Validation
+## Phase 3 — Data Quality & Validation ✅ COMPLETE (shipped in v1.0.2 — 2026-03-09)
 
 - [x] **Per-Field Confidence Scoring** — replace single overall confidence level with per-field scores (e.g., `Turnover: HIGH [MCA-verified]`, `Headcount: LOW [LinkedIn estimate]`)
 - [x] **Per-Field Freshness Timestamps** — each data point carries its source date, not just a report-level "data age" summary
@@ -56,12 +56,12 @@ Checklist of improvements to elevate the skill to enterprise grade. Items are gr
 - [ ] **Batch Mode** — research a list of companies (CSV/list input) in a single invocation, one report per company; critical for vertical campaign execution
 - [ ] **Refresh/Delta Mode** — re-research a previously profiled company, surfacing only what changed since the last report
 - [ ] **Watchlist/Monitor Mode** — periodically re-check a shortlisted prospect for trigger events (funding, leadership change, bad press spike)
-- [ ] **Streaming Partial Delivery** — in SEQUENTIAL mode, present each completed section immediately rather than buffering until all 14 steps finish
-- [ ] **Formal Dependency Graph** — declare a DAG for PARALLEL mode beyond the current "Step 10 depends on 2–9" note; prevents race conditions when steps are added or reordered
-- [ ] **Live Progress Reporting** — in PARALLEL mode, a status board ("Workers 2,3,4 complete; 5,8 in Checker retry; 11 pending") so users aren't blind until Orchestrator fires
+- [x] **Streaming Partial Delivery** — in SEQUENTIAL mode, present each completed section immediately rather than buffering until all steps finish *(shipped: Enhancement 2.8)*
+- [x] **Formal Dependency Graph** — declare a DAG for PARALLEL mode; explicit two-wave spawning enforces Step 10/10B dependency *(shipped: Fix 1.2 + Orchestrator validation step)*
+- [x] **Live Progress Reporting** — in PARALLEL mode, a status board after Wave 1 spawn; per-step ✓ updates as Workers complete *(shipped: Enhancement 2.7)*
 - [ ] **Tool Availability Detection** — if primary search tool is unavailable, explicitly try secondary, then note gap; prevents silent failures
-- [ ] **Rate Limit Awareness** — detect 429/throttle responses from Tracxn and LinkedIn; switch sources immediately rather than retrying the same endpoint
-- [ ] **Graceful Partial Report** — if 3+ steps fail, Orchestrator surfaces a "Partial Report" header and confidence summary rather than a silently incomplete full report
+- [x] **Rate Limit Awareness** — detect 429/throttle responses from Tracxn and LinkedIn; switch sources immediately rather than retrying the same endpoint *(shipped: Enhancement 2.6)*
+- [x] **Graceful Partial Report** — if 4+ steps fail, Step 15 opens with a partial-data warning header *(shipped: Fix 1.4)*
 
 ---
 
