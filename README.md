@@ -11,12 +11,6 @@ Compatible with Claude Code, Claude.ai, OpenCode, Codex, and any platform that s
 npx skills add KServe-FMS/skills
 ```
 
-Or from npm:
-
-```bash
-npx skills add @kserve/skills
-```
-
 Install a specific skill:
 
 ```bash

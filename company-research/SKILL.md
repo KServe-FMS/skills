@@ -55,22 +55,22 @@ If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 
 **PARALLEL:** Spawn in two waves after user confirms.
 
-**Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14. Each Worker runs its own Checker loop independently.
+**Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14. Each Worker runs its own Checker loop independently.
 
-**Wave 2 — spawn only after ALL Wave 1 workers have been Checker-approved:** Worker 10 (KServe Fit). Step 10 reads the approved outputs from Steps 2–9 before executing. Do not spawn Worker 10 until Wave 1 is fully complete.
+**Wave 2 — spawn only after ALL Wave 1 workers have been Checker-approved:** Workers 10 (KServe Fit) and 10B (ICP Score). Steps 10 and 10B read the approved outputs from Steps 2–9 before executing. Do not spawn Workers 10 or 10B until Wave 1 is fully complete.
 
-Orchestrator assembles the final report once Worker 10 and all Wave 1 workers are complete.
+Orchestrator assembles the final report once Workers 10, 10B, and all Wave 1 workers are complete.
 
 **PARALLEL — Progress reporting:** After spawning Wave 1, immediately post a status board to the user:
 ```
-Research started for [Company Name]. Running 12 parallel workers:
-⏳ In progress: Steps 2, 3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14
-⏸️  Waiting to spawn: Step 10 (KServe Fit — starts after Wave 1 completes)
+Research started for [Company Name]. Running 15 parallel workers:
+⏳ In progress: Steps 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14
+⏸️  Waiting to spawn: Steps 10 & 10B (KServe Fit + ICP Score — start after Wave 1 completes)
 I'll update you as sections complete.
 ```
 As each Worker is approved by its Checker, post a one-line update: `✓ [Step name] complete — [1-phrase summary, e.g., "Turnover: ₹847 Cr FY24"]`
 
-When Wave 1 is fully complete: `Wave 1 complete. Spawning KServe Fit analysis (Step 10). Assembling final report…`
+When Wave 1 is fully complete: `Wave 1 complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
 
 **SEQUENTIAL:** Run Steps 2–15 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 15. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first, but in SEQUENTIAL mode this is naturally guaranteed. After Step 15, append the BD Briefing and DATA QUALITY footer to complete the report.
 
@@ -839,7 +839,7 @@ User confirms company (Step 1)
 │  Post ✓ update after each worker approved           │
 └─────────────────────────────────────────────────────┘
          │ (each worker ↔ checker loop — 7 criteria)
-         ▼ POST "Wave 1 complete. Spawning Step 10…"
+         ▼ POST "Wave 1 complete. Spawning Steps 10 & 10B…"
 ┌─────────────────────────────────────────────────────┐
 │    WAVE 2 — SPAWN AFTER ALL WAVE 1 APPROVED         │
 │  Workers: 10 (KServe Fit), 10B (ICP Score)          │
@@ -849,7 +849,7 @@ User confirms company (Step 1)
          ▼
 ┌─────────────────────────────────────────────────────┐
 │         ORCHESTRATOR                                │
-│  Verify Step 10 ran after Wave 1 complete           │
+│  Verify Steps 10 & 10B ran after Wave 1 complete    │
 │  Assemble all approved sections in order            │
 │  Validate completeness · Tally confidence           │
 │  Collect RETRY_EXHAUSTED signals                    │
@@ -922,10 +922,10 @@ Only approve when all seven criteria are met (or a ⚠️ note and/or `RETRY_EXH
 
 ## Orchestrator Instructions
 
-After all 14 Workers complete and each Checker has approved:
+After all 17 Workers complete and each Checker has approved:
 
 1. Assemble all approved sections into the Output Format template in order
-2. **Before assembling Step 10 (KServe Fit):** verify that approved outputs from ALL of Steps 2–9 are present. If any Wave 1 step is still pending, wait. If a Step 10 Worker ran before Steps 2–9 were all approved, discard that output and re-request Step 10 with the full approved Wave 1 context.
+2. **Before assembling Steps 10 & 10B (KServe Fit + ICP Score):** verify that approved outputs from ALL of Steps 2–9 are present. If any Wave 1 step is still pending, wait. If a Step 10 or 10B Worker ran before Steps 2–9 were all approved, discard that output and re-request with the full approved Wave 1 context.
 3. Validate: no field is blank, pending, or "TBD" without a "Not publicly available" statement or a ⚠️ flag
 4. If any section is missing or incomplete, return to that step's Checker with a re-request before rendering
 5. Collect all `RETRY_EXHAUSTED` signals received from Checkers. If any exist, populate the "Data gaps" line in the 📝 DATA QUALITY footer with: `[Step N — field] — [reason]` for each one. If none, write "None".
