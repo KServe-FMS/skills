@@ -165,7 +165,7 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 6 — Directors | MCA director listing | Tofler | Company website (Leadership) · LinkedIn |
 | 6B — Dossiers | LinkedIn profiles of ★-flagged directors | Company website bio · News/conference mentions | Mark Lines 2–3 as "Not accessible" if LinkedIn profile is private |
 | 7 — Branches | Company website | Google Maps | News · LinkedIn (employees by location) |
-| 7B — Job Postings | Naukri (site:naukri.com "[company]") | LinkedIn Jobs · Indeed India | Company careers page |
+| 7B — Job Postings & Workforce Signals | Naukri (site:naukri.com "[company]") · LinkedIn company page (headcount) | LinkedIn Jobs · Indeed India · Crunchbase (employee range) | Company careers page |
 | 7C — Tech Stack | BuiltWith · Wappalyzer | Job posting tech mentions | Company website footer vendor tags |
 | 8 — Reviews | Google Business · Trustpilot · AmbitionBox · Glassdoor | Amazon · Flipkart · App Store · Google Play · Justdial | AppFollow · AppBot (app reviews) · job postings (Step 8E tool detection only) |
 | 9 — Rating | Synthesized from Step 8 output | — | If Step 8 produced < 15 total reviews across all platforms, mark rating Confidence: LOW and note sample size. If zero reviews, write "Rating: N/A". |
@@ -249,7 +249,7 @@ Find: total number of offices/branches/locations · key cities/states · any int
 
 ---
 
-### Step 7B — Job Postings (Outsourcing Intent Signals)
+### Step 7B — Job Postings & Workforce Signals
 
 Search for active job postings to reveal what functions the company is actively trying to fill — a direct signal of where they have resource gaps KServe can address.
 
@@ -269,6 +269,23 @@ Format: `[Role title] — [KServe service match] — [approximate count or "mult
 Then: 1-sentence BD signal — what does this hiring pattern imply about the company's current resourcing pressure?
 
 **If no public job postings found:** Write `No active job postings found on Naukri, LinkedIn Jobs, or Indeed India as of [date]. Company may not be publicly recruiting, or postings may be behind a login wall.`
+
+**Employee Headcount & Growth Trend:**
+Search LinkedIn company page for current employee count and any displayed growth percentage. Cross-reference with Crunchbase employee range.
+
+**Sources:**
+1. LinkedIn company page — employee count + displayed growth % (e.g., "+18% in 2 years")
+2. Crunchbase — employee range as cross-reference
+
+**Find:**
+- Current LinkedIn employee count (or band if only a range is shown)
+- Displayed growth % if LinkedIn surfaces it
+- Directional classification: `Growing` / `Stable` / `Shrinking` / `Insufficient data`
+- Correlation with job postings: high posting volume + growing headcount = scaling pain; few/no postings + flat/declining headcount = cost-cutting mode
+
+**BD framing:**
+- Scaling → outsourcing appetite; pitch capacity and speed
+- Hiring freeze / shrinking → cost-conscious; lead with cost-per-transaction vs. in-house
 
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
@@ -693,11 +710,15 @@ Source(s): [LinkedIn URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 [X locations | Key cities]
 Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
-💼 JOB POSTINGS (Intent Signals)
+💼 JOB POSTINGS & WORKFORCE SIGNALS
 Open roles: ~[N] | Top functions: [e.g., Customer Support: 12, Back-Office: 5, Collections: 4]
 KServe-relevant openings:
   [Role title] — [KServe service match] — [count]
 BD signal: [what this hiring pattern implies about resourcing pressure]
+LinkedIn Headcount: ~X employees [as of YYYY-MM-DD]
+Trend: Growing / Stable / Shrinking / Insufficient data
+Basis: [e.g., "+18% per LinkedIn over 2 years; corroborated by 23 open roles on Naukri"]
+Headcount signal: [scaling pain → outsourcing appetite / freeze → cost-conscious pitch, lead with ROI]
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 🛠️ TECHNOLOGY STACK
