@@ -176,6 +176,8 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 13 — Tracxn | Tracxn.com | Crunchbase (always check as secondary for employee count + funding timeline) | — |
 | 14 — M&A, Funding, Legal Risk & Key Partnerships | News (last 12 months) · consumerforum.in · sebi.gov.in · rbi.org.in · Company website Partners page · LinkedIn company updates | Tracxn · Crunchbase · MCA filings · gem.gov.in · Tofler / Zauba Corp (MCA compliance) | ET · Mint · Business Standard |
 | 15 — BD Briefing | Synthesized from Steps 2–14 output — no new searches | — | If ≥ 4 steps exhausted retries, open with partial-data warning. If Step 10 is RETRY_EXHAUSTED, omit Trigger Signals. If Step 8 RETRY_EXHAUSTED, skip review-based Conversation Starters. |
+| 16 — Outsourcing Vendors | News (ET · Mint · BS): `"[company]" "outsourcing" OR "BPO" OR "vendor"` | Step 7B JD language scan | LinkedIn updates · company website press releases |
+| 17 — Competitive Landscape | Tracxn "Similar companies" | Crunchbase "Competitors" tab | News/industry rankings: `"[company] competitors"` |
 
 ---
 
@@ -698,6 +700,59 @@ Example: *"Call Priya Mehta (CFO, LinkedIn: accessible) within 48 hours — 3 op
 
 ---
 
+### Step 16 — Current Outsourcing Vendors
+
+Knowing which BPO vendors are already embedded changes the pitch angle from "you need this" to "here's why KServe is better."
+
+**Sources (try in order):**
+1. News: `"[company name]" "outsourcing" OR "BPO" OR "vendor" OR "BPO partner"` — ET, Mint, Business Standard
+2. Job postings from Step 7B: scan JD language for "coordinate with outsourcing vendor," "manage BPO partner," "work with third-party vendor"
+3. LinkedIn company updates / press releases on company website
+4. General search: `"[company name]" "call center partner" OR "back office partner" OR "collections agency"`
+
+**Find:**
+- Named outsourcing/BPO vendors already in use
+- Functions being outsourced (CS, collections, back-office, lead gen, etc.)
+- Any indication of contract vintage (fresh engagement vs. long-standing)
+- If no vendor found: explicitly state "No outsourcing vendor relationships found in public record"
+
+**BD framing rules:**
+- No vendor found → greenfield; pitch as first mover, zero displacement risk
+- Competitor BPO vendor found → displacement pitch; lead with KServe's AI differentiation and cost-per-transaction comparison
+- Non-BPO vendor found (in-house only, freelance) → expansion pitch; they've started outsourcing, KServe can professionalize it
+- KServe-adjacent industry client found → name-drop the relevant case study in outreach
+
+**Worker note:** If no results found after all 4 source attempts, explicitly state "No outsourcing vendor relationships found in public record" — do not infer absence from general company maturity signals.
+
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+---
+
+### Step 17 — Competitive Landscape
+
+**Sources (try in order):**
+1. Tracxn — "Similar companies" section on the company's Tracxn profile
+2. Crunchbase — "Similar companies" or "Competitors" tab
+3. Search: `"[company name] competitors" OR "top [industry] companies India [year]"`
+4. Industry directories or rankings (e.g., Inc42, YourStory for startups; CRISIL/ICRA sector reports for traditional companies)
+
+**Find:**
+- Top 3 direct competitors by name
+- One-line descriptor for each (size signal, market position, or funding stage if known)
+- Whether KServe already serves any of these competitors — if yes, flag as case study reference
+- Whether any competitor is visibly outpacing the prospect (signals urgency)
+
+**BD framing rules:**
+- KServe already serves a competitor → name it in outreach as social proof in the same vertical
+- A competitor is larger/better-funded → urgency hook: "they're scaling faster — outsourcing operations lets you keep pace without the headcount cost"
+- No competitive data found → write "No public competitor data found" — do not guess from general industry knowledge
+
+**Worker note:** If no results found after all 4 source attempts, explicitly state "No public competitor data found" — do not infer from general industry knowledge.
+
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+---
+
 ## Output Format
 
 Present the final report using this template:
@@ -879,6 +934,21 @@ Potential Objections:
 
 Next Best Action:
 [Do X] — [because Y] — [contact: Named Director] — [via: LinkedIn InMail / phone / email] — [hook: specific research finding]
+
+🏭 CURRENT OUTSOURCING VENDORS
+Vendors detected:
+  [Vendor name] — [function outsourced] — [source]
+  [Or: "No outsourcing vendor relationships found in public record"]
+BD signal: [greenfield / displacement / expansion angle — specific pitch implication]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+🏆 COMPETITIVE LANDSCAPE
+1. [Competitor name] — [descriptor: size / funding / market position]
+2. [Competitor name] — [descriptor]
+3. [Competitor name] — [descriptor]
+[Or: "No public competitor data found on Tracxn, Crunchbase, or search"]
+BD signal: [case study tie-in / competitive urgency angle]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📝 DATA QUALITY
