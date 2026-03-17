@@ -1000,6 +1000,7 @@ Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 📝 DATA QUALITY
 Overall: [e.g., 9/16 fields HIGH · 5 MED · 2 LOW]
 Data gaps: [List any fields that hit retry limit, or "None"]
+Security events: [INJECTION_FLAGGED: Step N — platform · Sanitizer stripped: Step N — platform, or "None"]
 Oldest source: [YYYY-MM-DD]
 
 Confidence key: HIGH = MCA-verified or 2+ independent sources · MED = single credible source or aggregator · LOW = estimated, partial, or unverified
