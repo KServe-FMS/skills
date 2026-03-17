@@ -174,7 +174,7 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 11 — Customer Care | Company website | Google Business · Justdial | App Store / Play Store listing |
 | 12 — Social Media | Direct platform search (LinkedIn, Instagram, Facebook, X, YouTube) | Social Blade (trends) | Company website social links |
 | 13 — Tracxn | Tracxn.com | Crunchbase (always check as secondary for employee count + funding timeline) | — |
-| 14 — M&A | News (last 12 months) | Tracxn · Crunchbase · MCA filings · gem.gov.in | ET · Mint · Business Standard |
+| 14 — M&A, Funding, Legal Risk & Key Partnerships | News (last 12 months) · consumerforum.in · sebi.gov.in · rbi.org.in · Company website Partners page · LinkedIn company updates | Tracxn · Crunchbase · MCA filings · gem.gov.in · Tofler / Zauba Corp (MCA compliance) | ET · Mint · Business Standard |
 | 15 — BD Briefing | Synthesized from Steps 2–14 output — no new searches | — | If ≥ 4 steps exhausted retries, open with partial-data warning. If Step 10 is RETRY_EXHAUSTED, omit Trigger Signals. If Step 8 RETRY_EXHAUSTED, skip review-based Conversation Starters. |
 
 ---
@@ -598,7 +598,7 @@ If Tracxn profile requires a paid subscription to view detail: note in report `T
 
 ---
 
-### Step 14 — Acquisitions & M&A Activity
+### Step 14 — M&A, Funding, Legal Risk & Key Partnerships
 
 Search for any recent (last 12 months preferred): acquisitions · being acquired · mergers · major investment rounds · PE/VC backing changes.
 
@@ -611,6 +611,41 @@ BD signals:
 - Fresh funding raised → likely expanding, open to outsourcing (highlight as trigger signal for Step 15)
 - GeM supplier → compliance-driven, longer sales cycle, pitch with documentation accuracy and audit trails
 - Late-stage PE backing → cost reduction is a stated goal; lead with cost-per-transaction vs. in-house comparison
+
+**Regulatory & Legal Risk:**
+
+**Sources (try in order):**
+1. MCA filing status — check if annual returns / AOC-4 are overdue via Tofler or Zauba Corp
+2. News search: `"[company name]" "legal notice" OR "court case" OR "SEBI" OR "RBI" OR "regulatory action"`
+3. Consumer court portals: consumerforum.in, National Consumer Helpline database
+4. SEBI enforcement orders: sebi.gov.in; RBI press releases: rbi.org.in
+
+**Find:**
+- MCA compliance status: filings current, overdue, or struck-off risk
+- Consumer court cases filed against the company (count + nature if visible)
+- SEBI or RBI enforcement notices
+- Any other material litigation in public record
+
+**BD framing rules:**
+- Compliance gaps / court cases → urgency trigger + pitch KServe's documentation accuracy and audit-trail credentials
+- Clean record → reliability framing ("you're compliance-conscious — so is KServe")
+- SEBI/RBI action → high-distress signal; approach carefully, but outsourcing cost reduction is directly relevant
+
+**Key Partnerships & Integrations:**
+Covers business-level strategic alliances and distribution tie-ups. Technology vendor relationships (CRM, support tools) belong in Step 7C — do not duplicate them here.
+
+**Sources (try in order):**
+1. Company website — Partners, Integrations, or Ecosystem page
+2. Press releases: `"[company name]" "partnership" OR "alliance" OR "tie-up" OR "integration"`
+3. LinkedIn company updates (last 12 months)
+4. Tracxn / Crunchbase partnerships section
+
+**Find:**
+- Named strategic partners (distribution alliances, co-marketing, formal tie-ups)
+- Business-level integrations beyond tech tools (e.g., "official partner of HDFC Bank," "distribution tie-up with BigBasket")
+- Direction signal: what does the partner ecosystem reveal about where the company is heading?
+
+**BD framing:** A company actively building a partner network is culturally open to new vendor relationships. Named partners can serve as warm referral angles if KServe already works with them.
 
 ---
 
@@ -808,12 +843,25 @@ Crunchbase: Employees: [range] | Total funding: [$X / Not disclosed] | Last roun
 BD signal: [funding stage implication for outsourcing receptivity]
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
-🔀 M&A, FUNDING & OWNERSHIP
+🔀 M&A, FUNDING, LEGAL RISK & KEY PARTNERSHIPS
 [Summary of recent M&A/funding or "No recent M&A activity found"]
 GeM supplier: [Yes — active / No / Not checked]
 PE ownership: [PE firm — stake — fund vintage year / Not applicable]
 BD signal: [ownership/funding implication]
 Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
+
+⚖️ REGULATORY & LEGAL RISK
+MCA compliance: [Clean — filings current / Overdue: X filings / Struck-off risk / Unable to verify]
+Consumer court: [X cases found — [nature] / None found]
+SEBI / RBI: [Notice found: [summary] / None found]
+BD signal: [distress → urgency + compliance credentials / clean → reliability framing]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+🤝 KEY PARTNERSHIPS & INTEGRATIONS
+[Partner name — nature of alliance — BD implication]
+[Repeat for each named partner, or "No public partnerships found"]
+BD signal: [partner ecosystem direction / referral angle if KServe knows the partner]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🧠 BD INTELLIGENCE BRIEFING
 
