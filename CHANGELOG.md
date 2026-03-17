@@ -5,6 +5,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.3.0] — 2026-03-17
+
+### Added — New Steps
+- **Step 16 — Current Outsourcing Vendors**: detects embedded BPO vendors via news, JD language, and LinkedIn; BD angles: greenfield, displacement, or expansion
+- **Step 17 — Competitive Landscape**: top 3 direct competitors via Tracxn, Crunchbase, and industry rankings; BD angles: social proof and competitive urgency
+
+### Added — Extensions to Existing Steps
+- **Step 7B — Workforce Signals** (was: Job Postings): extended with Employee Headcount & Growth Trend sub-section — LinkedIn headcount, YoY growth %, and BD signal (scaling → outsourcing appetite; hiring freeze → cost-conscious pitch)
+- **Step 14 — M&A, Funding, Legal Risk & Key Partnerships** (was: Acquisitions & M&A Activity): extended with Regulatory & Legal Risk sub-section (MCA compliance, consumer court cases, SEBI/RBI enforcement) and Key Partnerships & Integrations sub-section (strategic alliances and distribution tie-ups)
+
+### Changed
+- Wave 1 workers: 15 → 17 (Steps 16 and 17 added)
+- Research steps: Steps 2–15 (14 steps) → Steps 2–17 (16 steps)
+- Orchestrator total workers: 17 → 19
+- DATA QUALITY example denominator: `9/14` → `9/16`
+- SEQUENTIAL diagram extended to Steps 16 and 17
+- Source Priority table: 15 rows → 17 rows
+
+### Repository
+- Removed `@kserve/skills` npm package (unpublished); `package.json` name changed to `kserve-skills`; npm badge and registry references removed from README, CHANGELOG, and CLAUDE.md
+- ROADMAP.md: Phase 1 New Data Modules 5/7 → 6/7 complete (Import/Export Data remains)
+
+---
+
 ## [1.2.1] — 2026-03-12
 
 ### Fixed
