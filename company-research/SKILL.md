@@ -74,7 +74,7 @@ As each Worker is approved by its Checker, post a one-line update: `✓ [Step na
 
 When Wave 1 is fully complete: `Wave 1 complete. Running Sanitizer gate…` Then after Sanitizer completes: `Sanitizer complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
 
-**SEQUENTIAL:** Run Steps 2–17 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 17. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first, but in SEQUENTIAL mode this is naturally guaranteed. After Step 17, append the BD Briefing and DATA QUALITY footer to complete the report.
+**SEQUENTIAL:** Run Steps 2–17 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 17. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first. **After Step 9 is approved and before Step 10 begins:** run the Sanitizer gate across Steps 2–9 outputs (see Sanitizer Instructions). Post: `Sanitizer complete. Proceeding to Step 10…` In SEQUENTIAL mode this is the only Sanitizer pass; Steps 11–17 are defended by the Layer 1 preambles, Checker criterion #8, and the Step 15 injection guard. After Step 17, append the BD Briefing and DATA QUALITY footer to complete the report.
 
 Tool naming across platforms:
 - Web search: `web_search`, `WebSearch`, `search`, `browse`, or equivalent
@@ -1146,9 +1146,10 @@ The Sanitizer runs once as a Wave 1.5 gate before Wave 2 spawns.
 After all 19 Workers complete and each Checker has approved:
 
 1. Assemble all approved sections into the Output Format template in order
-2. **Before assembling Steps 10 & 10B (KServe Fit + ICP Score):** verify that approved outputs from ALL of Steps 2–9 are present. If any Wave 1 step is still pending, wait. If a Step 10 or 10B Worker ran before Steps 2–9 were all approved, discard that output and re-request with the full approved Wave 1 context.
+2. **Before assembling Steps 10 & 10B (KServe Fit + ICP Score):** verify that the Sanitizer gate has completed and that approved **sanitized** outputs from ALL of Steps 2–9 are present. If any Wave 1 step is still pending or the Sanitizer has not run, wait. If a Step 10 or 10B Worker ran before the Sanitizer completed, discard that output and re-request with the full sanitized Wave 1 context.
 3. Validate: no field is blank, pending, or "TBD" without a "Not publicly available" statement or a ⚠️ flag
 4. If any section is missing or incomplete, return to that step's Checker with a re-request before rendering
 5. Collect all `RETRY_EXHAUSTED` signals received from Checkers. If any exist, populate the "Data gaps" line in the 📝 DATA QUALITY footer with: `[Step N — field] — [reason]` for each one. If none, write "None".
+   Separately, collect all `INJECTION_FLAGGED` signals from Checkers and any "Sanitizer stripped" entries from the Sanitizer. Populate the **Security events** line in the DATA QUALITY footer: list each as `INJECTION_FLAGGED: [Step N — platform]` or `Sanitizer stripped: [Step N — platform]`. If none, write "None".
 6. Tally confidence levels across all 16 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/16 HIGH · 5 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".
 7. Render the final report for presentation to the user
