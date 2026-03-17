@@ -72,7 +72,7 @@ As each Worker is approved by its Checker, post a one-line update: `✓ [Step na
 
 When Wave 1 is fully complete: `Wave 1 complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
 
-**SEQUENTIAL:** Run Steps 2–15 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 15. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first, but in SEQUENTIAL mode this is naturally guaranteed. After Step 15, append the BD Briefing and DATA QUALITY footer to complete the report.
+**SEQUENTIAL:** Run Steps 2–17 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 17. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first, but in SEQUENTIAL mode this is naturally guaranteed. After Step 17, append the BD Briefing and DATA QUALITY footer to complete the report.
 
 Tool naming across platforms:
 - Web search: `web_search`, `WebSearch`, `search`, `browse`, or equivalent
@@ -181,7 +181,7 @@ Use this table for every step. Each step lists which sources to try in order of 
 
 ---
 
-## Research Steps (Steps 2–15)
+## Research Steps (Steps 2–17)
 
 ### Step 2 — Line of Business
 
@@ -653,7 +653,7 @@ Covers business-level strategic alliances and distribution tie-ups. Technology v
 
 ### Step 15 — BD Intelligence Briefing
 
-**Most important step.** Synthesize findings from Steps 2–14 into actionable outreach intel. **Do not run new web searches** — use only what was gathered in prior steps.
+**Most important step.** Synthesize findings from Steps 2–17 into actionable outreach intel. **Do not run new web searches** — use only what was gathered in prior steps.
 
 **QUALITY GATE — Before synthesizing, the Step 15 Worker must:**
 1. Count `RETRY_EXHAUSTED` signals from prior steps. If **4 or more** steps exhausted retries, open the BD Briefing section with: `⚠️ Partial data warning: [N] research steps returned best-available data only. The briefing below reflects current research confidence — validate key points before outreach.`
