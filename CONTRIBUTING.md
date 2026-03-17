@@ -1,5 +1,18 @@
 # Contributing to KServe Skills
 
+## How to Contribute
+
+All contributions follow the Research → Plan → Annotate → Execute pipeline. **Never propose or make changes without first investigating the existing skill(s) affected.**
+
+Before starting any non-trivial change:
+1. Investigate the affected skill(s) in depth — read every step, understand the Worker → Checker → Orchestrator flow, trace cross-references
+2. Write a `plan.md` describing what will change and why
+3. Get approval before touching any file
+
+For small changes (typo fixes, wording tweaks), compress Research + Plan into a brief note in chat before proceeding.
+
+---
+
 ## Adding a new skill
 
 1. Create a new directory: `<skill-name>/SKILL.md`
@@ -35,13 +48,20 @@
 
 **Never modify a step instruction without testing it against at least 2 real company examples.** Run the skill on a known company (e.g., Zepto, PolicyBazaar, HDFC Ergo) and verify the output matches the intended change before merging.
 
-## Code quality
+**Plan before editing.** For any change beyond a typo fix, write a `plan.md` covering: what changes, which steps/modes are affected, what the output difference will be, and any cross-references that need updating. Get approval before executing.
+
+## Quality standards
 
 - This is a pure Markdown/YAML repository — no build step, no linting
 - All changes take effect immediately after merge
 - Use the Worker → Checker → Orchestrator pattern for consistency across skills
 - Every data point in output must have a source URL — this is a hard requirement enforced by the Checker
 - Checkers must validate at minimum: source present, credible, recent, accurate, complete
+- **Follow existing conventions.** Match the voice, tone, structure, and terminology already in the skill files
+- **Don't over-engineer.** Deliver exactly what the plan specifies — no extra scope or new patterns
+- **Don't duplicate.** Check whether a step, Checker criterion, or output field already exists before adding it
+- **Be precise.** Every instruction must be specific enough that two different agents produce consistent output
+- **Trim the fat.** No filler instructions — every line must earn its place
 
 ## Step numbering
 

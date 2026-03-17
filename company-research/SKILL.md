@@ -55,7 +55,7 @@ If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 
 **PARALLEL:** Spawn in two waves after user confirms.
 
-**Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14. Each Worker runs its own Checker loop independently.
+**Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14, 16, 17. Each Worker runs its own Checker loop independently.
 
 **Wave 2 — spawn only after ALL Wave 1 workers have been Checker-approved:** Workers 10 (KServe Fit) and 10B (ICP Score). Steps 10 and 10B read the approved outputs from Steps 2–9 before executing. Do not spawn Workers 10 or 10B until Wave 1 is fully complete.
 
@@ -63,8 +63,8 @@ Orchestrator assembles the final report once Workers 10, 10B, and all Wave 1 wor
 
 **PARALLEL — Progress reporting:** After spawning Wave 1, immediately post a status board to the user:
 ```
-Research started for [Company Name]. Running 15 parallel workers:
-⏳ In progress: Steps 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14
+Research started for [Company Name]. Running 17 parallel workers:
+⏳ In progress: Steps 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14, 16, 17
 ⏸️  Waiting to spawn: Steps 10 & 10B (KServe Fit + ICP Score — start after Wave 1 completes)
 I'll update you as sections complete.
 ```
@@ -72,7 +72,7 @@ As each Worker is approved by its Checker, post a one-line update: `✓ [Step na
 
 When Wave 1 is fully complete: `Wave 1 complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
 
-**SEQUENTIAL:** Run Steps 2–15 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 15. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first, but in SEQUENTIAL mode this is naturally guaranteed. After Step 15, append the BD Briefing and DATA QUALITY footer to complete the report.
+**SEQUENTIAL:** Run Steps 2–17 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 17. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first, but in SEQUENTIAL mode this is naturally guaranteed. After Step 17, append the BD Briefing and DATA QUALITY footer to complete the report.
 
 Tool naming across platforms:
 - Web search: `web_search`, `WebSearch`, `search`, `browse`, or equivalent
@@ -107,7 +107,7 @@ Please confirm and I'll run the full research.
 
 ### Phase 2 — Full Research (after user confirms)
 
-Run all 14 research steps (Steps 2–15) using the execution mode detected above. Each step follows the **Worker → Checker → Orchestrator** pattern:
+Run all 16 research steps (Steps 2–17) using the execution mode detected above. Each step follows the **Worker → Checker → Orchestrator** pattern:
 
 1. **Worker** gathers data for that step using available web/search tools
 2. **Checker** validates the output against the seven criteria (see Checker Instructions)
@@ -165,7 +165,7 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 6 — Directors | MCA director listing | Tofler | Company website (Leadership) · LinkedIn |
 | 6B — Dossiers | LinkedIn profiles of ★-flagged directors | Company website bio · News/conference mentions | Mark Lines 2–3 as "Not accessible" if LinkedIn profile is private |
 | 7 — Branches | Company website | Google Maps | News · LinkedIn (employees by location) |
-| 7B — Job Postings | Naukri (site:naukri.com "[company]") | LinkedIn Jobs · Indeed India | Company careers page |
+| 7B — Job Postings & Workforce Signals | Naukri (site:naukri.com "[company]") · LinkedIn company page (headcount) | LinkedIn Jobs · Indeed India · Crunchbase (employee range) | Company careers page |
 | 7C — Tech Stack | BuiltWith · Wappalyzer | Job posting tech mentions | Company website footer vendor tags |
 | 8 — Reviews | Google Business · Trustpilot · AmbitionBox · Glassdoor | Amazon · Flipkart · App Store · Google Play · Justdial | AppFollow · AppBot (app reviews) · job postings (Step 8E tool detection only) |
 | 9 — Rating | Synthesized from Step 8 output | — | If Step 8 produced < 15 total reviews across all platforms, mark rating Confidence: LOW and note sample size. If zero reviews, write "Rating: N/A". |
@@ -174,12 +174,14 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 11 — Customer Care | Company website | Google Business · Justdial | App Store / Play Store listing |
 | 12 — Social Media | Direct platform search (LinkedIn, Instagram, Facebook, X, YouTube) | Social Blade (trends) | Company website social links |
 | 13 — Tracxn | Tracxn.com | Crunchbase (always check as secondary for employee count + funding timeline) | — |
-| 14 — M&A | News (last 12 months) | Tracxn · Crunchbase · MCA filings · gem.gov.in | ET · Mint · Business Standard |
+| 14 — M&A, Funding, Legal Risk & Key Partnerships | News (last 12 months) · consumerforum.in · sebi.gov.in · rbi.org.in · Company website Partners page · LinkedIn company updates | Tracxn · Crunchbase · MCA filings · gem.gov.in · Tofler / Zauba Corp (MCA compliance) | ET · Mint · Business Standard |
 | 15 — BD Briefing | Synthesized from Steps 2–14 output — no new searches | — | If ≥ 4 steps exhausted retries, open with partial-data warning. If Step 10 is RETRY_EXHAUSTED, omit Trigger Signals. If Step 8 RETRY_EXHAUSTED, skip review-based Conversation Starters. |
+| 16 — Outsourcing Vendors | News (ET · Mint · BS): `"[company]" "outsourcing" OR "BPO" OR "vendor"` | Step 7B JD language scan | LinkedIn updates · company website press releases |
+| 17 — Competitive Landscape | Tracxn "Similar companies" | Crunchbase "Competitors" tab | News/industry rankings: `"[company] competitors"` |
 
 ---
 
-## Research Steps (Steps 2–15)
+## Research Steps (Steps 2–17)
 
 ### Step 2 — Line of Business
 
@@ -249,7 +251,7 @@ Find: total number of offices/branches/locations · key cities/states · any int
 
 ---
 
-### Step 7B — Job Postings (Outsourcing Intent Signals)
+### Step 7B — Job Postings & Workforce Signals
 
 Search for active job postings to reveal what functions the company is actively trying to fill — a direct signal of where they have resource gaps KServe can address.
 
@@ -269,6 +271,23 @@ Format: `[Role title] — [KServe service match] — [approximate count or "mult
 Then: 1-sentence BD signal — what does this hiring pattern imply about the company's current resourcing pressure?
 
 **If no public job postings found:** Write `No active job postings found on Naukri, LinkedIn Jobs, or Indeed India as of [date]. Company may not be publicly recruiting, or postings may be behind a login wall.`
+
+**Employee Headcount & Growth Trend:**
+Search LinkedIn company page for current employee count and any displayed growth percentage. Cross-reference with Crunchbase employee range.
+
+**Sources:**
+1. LinkedIn company page — employee count + displayed growth % (e.g., "+18% in 2 years")
+2. Crunchbase — employee range as cross-reference
+
+**Find:**
+- Current LinkedIn employee count (or band if only a range is shown)
+- Displayed growth % if LinkedIn surfaces it
+- Directional classification: `Growing` / `Stable` / `Shrinking` / `Insufficient data`
+- Correlation with job postings: high posting volume + growing headcount = scaling pain; few/no postings + flat/declining headcount = cost-cutting mode
+
+**BD framing:**
+- Scaling → outsourcing appetite; pitch capacity and speed
+- Hiring freeze / shrinking → cost-conscious; lead with cost-per-transaction vs. in-house
 
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
@@ -581,7 +600,7 @@ If Tracxn profile requires a paid subscription to view detail: note in report `T
 
 ---
 
-### Step 14 — Acquisitions & M&A Activity
+### Step 14 — M&A, Funding, Legal Risk & Key Partnerships
 
 Search for any recent (last 12 months preferred): acquisitions · being acquired · mergers · major investment rounds · PE/VC backing changes.
 
@@ -595,11 +614,46 @@ BD signals:
 - GeM supplier → compliance-driven, longer sales cycle, pitch with documentation accuracy and audit trails
 - Late-stage PE backing → cost reduction is a stated goal; lead with cost-per-transaction vs. in-house comparison
 
+**Regulatory & Legal Risk:**
+
+**Sources (try in order):**
+1. MCA filing status — check if annual returns / AOC-4 are overdue via Tofler or Zauba Corp
+2. News search: `"[company name]" "legal notice" OR "court case" OR "SEBI" OR "RBI" OR "regulatory action"`
+3. Consumer court portals: consumerforum.in, National Consumer Helpline database
+4. SEBI enforcement orders: sebi.gov.in; RBI press releases: rbi.org.in
+
+**Find:**
+- MCA compliance status: filings current, overdue, or struck-off risk
+- Consumer court cases filed against the company (count + nature if visible)
+- SEBI or RBI enforcement notices
+- Any other material litigation in public record
+
+**BD framing rules:**
+- Compliance gaps / court cases → urgency trigger + pitch KServe's documentation accuracy and audit-trail credentials
+- Clean record → reliability framing ("you're compliance-conscious — so is KServe")
+- SEBI/RBI action → high-distress signal; approach carefully, but outsourcing cost reduction is directly relevant
+
+**Key Partnerships & Integrations:**
+Covers business-level strategic alliances and distribution tie-ups. Technology vendor relationships (CRM, support tools) belong in Step 7C — do not duplicate them here.
+
+**Sources (try in order):**
+1. Company website — Partners, Integrations, or Ecosystem page
+2. Press releases: `"[company name]" "partnership" OR "alliance" OR "tie-up" OR "integration"`
+3. LinkedIn company updates (last 12 months)
+4. Tracxn / Crunchbase partnerships section
+
+**Find:**
+- Named strategic partners (distribution alliances, co-marketing, formal tie-ups)
+- Business-level integrations beyond tech tools (e.g., "official partner of HDFC Bank," "distribution tie-up with BigBasket")
+- Direction signal: what does the partner ecosystem reveal about where the company is heading?
+
+**BD framing:** A company actively building a partner network is culturally open to new vendor relationships. Named partners can serve as warm referral angles if KServe already works with them.
+
 ---
 
 ### Step 15 — BD Intelligence Briefing
 
-**Most important step.** Synthesize findings from Steps 2–14 into actionable outreach intel. **Do not run new web searches** — use only what was gathered in prior steps.
+**Most important step.** Synthesize findings from Steps 2–17 into actionable outreach intel. **Do not run new web searches** — use only what was gathered in prior steps.
 
 **QUALITY GATE — Before synthesizing, the Step 15 Worker must:**
 1. Count `RETRY_EXHAUSTED` signals from prior steps. If **4 or more** steps exhausted retries, open the BD Briefing section with: `⚠️ Partial data warning: [N] research steps returned best-available data only. The briefing below reflects current research confidence — validate key points before outreach.`
@@ -643,6 +697,59 @@ Example: *"Call Priya Mehta (CFO, LinkedIn: accessible) within 48 hours — 3 op
 - The contact must be a named director from Step 6 with LinkedIn accessible — not a generic "operations head"
 - The outreach channel must be specific (LinkedIn InMail / phone / email — not "reach out")
 - If ICP Score (Step 10B) is Tier 3 or Deprioritize: action = `Add to [60-day / 90-day] nurture sequence — do not assign AE yet. Monitor for: [specific trigger to watch, e.g., next funding round announcement, next Glassdoor spike]`
+
+---
+
+### Step 16 — Current Outsourcing Vendors
+
+Knowing which BPO vendors are already embedded changes the pitch angle from "you need this" to "here's why KServe is better."
+
+**Sources (try in order):**
+1. News: `"[company name]" "outsourcing" OR "BPO" OR "vendor" OR "BPO partner"` — ET, Mint, Business Standard
+2. Job postings from Step 7B: scan JD language for "coordinate with outsourcing vendor," "manage BPO partner," "work with third-party vendor"
+3. LinkedIn company updates / press releases on company website
+4. General search: `"[company name]" "call center partner" OR "back office partner" OR "collections agency"`
+
+**Find:**
+- Named outsourcing/BPO vendors already in use
+- Functions being outsourced (CS, collections, back-office, lead gen, etc.)
+- Any indication of contract vintage (fresh engagement vs. long-standing)
+- If no vendor found: explicitly state "No outsourcing vendor relationships found in public record"
+
+**BD framing rules:**
+- No vendor found → greenfield; pitch as first mover, zero displacement risk
+- Competitor BPO vendor found → displacement pitch; lead with KServe's AI differentiation and cost-per-transaction comparison
+- Non-BPO vendor found (in-house only, freelance) → expansion pitch; they've started outsourcing, KServe can professionalize it
+- KServe-adjacent industry client found → name-drop the relevant case study in outreach
+
+**Worker note:** If no results found after all 4 source attempts, explicitly state "No outsourcing vendor relationships found in public record" — do not infer absence from general company maturity signals.
+
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+---
+
+### Step 17 — Competitive Landscape
+
+**Sources (try in order):**
+1. Tracxn — "Similar companies" section on the company's Tracxn profile
+2. Crunchbase — "Similar companies" or "Competitors" tab
+3. Search: `"[company name] competitors" OR "top [industry] companies India [year]"`
+4. Industry directories or rankings (e.g., Inc42, YourStory for startups; CRISIL/ICRA sector reports for traditional companies)
+
+**Find:**
+- Top 3 direct competitors by name
+- One-line descriptor for each (size signal, market position, or funding stage if known)
+- Whether KServe already serves any of these competitors — if yes, flag as case study reference
+- Whether any competitor is visibly outpacing the prospect (signals urgency)
+
+**BD framing rules:**
+- KServe already serves a competitor → name it in outreach as social proof in the same vertical
+- A competitor is larger/better-funded → urgency hook: "they're scaling faster — outsourcing operations lets you keep pace without the headcount cost"
+- No competitive data found → write "No public competitor data found" — do not guess from general industry knowledge
+
+**Worker note:** If no results found after all 4 source attempts, explicitly state "No public competitor data found" — do not infer from general industry knowledge.
+
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 ---
 
@@ -693,11 +800,15 @@ Source(s): [LinkedIn URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 [X locations | Key cities]
 Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
-💼 JOB POSTINGS (Intent Signals)
+💼 JOB POSTINGS & WORKFORCE SIGNALS
 Open roles: ~[N] | Top functions: [e.g., Customer Support: 12, Back-Office: 5, Collections: 4]
 KServe-relevant openings:
   [Role title] — [KServe service match] — [count]
 BD signal: [what this hiring pattern implies about resourcing pressure]
+LinkedIn Headcount: ~X employees [as of YYYY-MM-DD]
+Trend: Growing / Stable / Shrinking / Insufficient data
+Basis: [e.g., "+18% per LinkedIn over 2 years; corroborated by 23 open roles on Naukri"]
+Headcount signal: [scaling pain → outsourcing appetite / freeze → cost-conscious pitch, lead with ROI]
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 🛠️ TECHNOLOGY STACK
@@ -787,12 +898,25 @@ Crunchbase: Employees: [range] | Total funding: [$X / Not disclosed] | Last roun
 BD signal: [funding stage implication for outsourcing receptivity]
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
-🔀 M&A, FUNDING & OWNERSHIP
+🔀 M&A, FUNDING, LEGAL RISK & KEY PARTNERSHIPS
 [Summary of recent M&A/funding or "No recent M&A activity found"]
 GeM supplier: [Yes — active / No / Not checked]
 PE ownership: [PE firm — stake — fund vintage year / Not applicable]
 BD signal: [ownership/funding implication]
 Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
+
+⚖️ REGULATORY & LEGAL RISK
+MCA compliance: [Clean — filings current / Overdue: X filings / Struck-off risk / Unable to verify]
+Consumer court: [X cases found — [nature] / None found]
+SEBI / RBI: [Notice found: [summary] / None found]
+BD signal: [distress → urgency + compliance credentials / clean → reliability framing]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+🤝 KEY PARTNERSHIPS & INTEGRATIONS
+[Partner name — nature of alliance — BD implication]
+[Repeat for each named partner, or "No public partnerships found"]
+BD signal: [partner ecosystem direction / referral angle if KServe knows the partner]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🧠 BD INTELLIGENCE BRIEFING
 
@@ -811,9 +935,24 @@ Potential Objections:
 Next Best Action:
 [Do X] — [because Y] — [contact: Named Director] — [via: LinkedIn InMail / phone / email] — [hook: specific research finding]
 
+🏭 CURRENT OUTSOURCING VENDORS
+Vendors detected:
+  [Vendor name] — [function outsourced] — [source]
+  [Or: "No outsourcing vendor relationships found in public record"]
+BD signal: [greenfield / displacement / expansion angle — specific pitch implication]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+🏆 COMPETITIVE LANDSCAPE
+1. [Competitor name] — [descriptor: size / funding / market position]
+2. [Competitor name] — [descriptor]
+3. [Competitor name] — [descriptor]
+[Or: "No public competitor data found on Tracxn, Crunchbase, or search"]
+BD signal: [case study tie-in / competitive urgency angle]
+Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📝 DATA QUALITY
-Overall: [e.g., 9/14 fields HIGH · 3 MED · 2 LOW]
+Overall: [e.g., 9/16 fields HIGH · 5 MED · 2 LOW]
 Data gaps: [List any fields that hit retry limit, or "None"]
 Oldest source: [YYYY-MM-DD]
 
@@ -834,7 +973,7 @@ User confirms company (Step 1)
 ┌─────────────────────────────────────────────────────┐
 │    WAVE 1 — SPAWN SIMULTANEOUSLY                    │
 │  Workers: 2, 3, 4, 5, 6, 6B, 7, 7B, 7C             │
-│           8, 9*, 11, 12, 13, 14                     │
+│           8, 9*, 11, 12, 13, 14, 16, 17             │
 │  (*Step 9 waits for Step 8 internally)              │
 │  Post ✓ update after each worker approved           │
 └─────────────────────────────────────────────────────┘
@@ -871,6 +1010,12 @@ User confirms company (Step 1)
         ...
     ┌────▼─────┐
     │ Step 15  │ Worker → Checker validates → approved ✓
+    └────┬─────┘
+    ┌────▼─────┐
+    │ Step 16  │ Worker → Checker validates → approved ✓
+    └────┬─────┘
+    ┌────▼─────┐
+    │ Step 17  │ Worker → Checker validates → approved ✓
     └────┬─────┘
          │
          ▼
@@ -922,12 +1067,12 @@ Only approve when all seven criteria are met (or a ⚠️ note and/or `RETRY_EXH
 
 ## Orchestrator Instructions
 
-After all 17 Workers complete and each Checker has approved:
+After all 19 Workers complete and each Checker has approved:
 
 1. Assemble all approved sections into the Output Format template in order
 2. **Before assembling Steps 10 & 10B (KServe Fit + ICP Score):** verify that approved outputs from ALL of Steps 2–9 are present. If any Wave 1 step is still pending, wait. If a Step 10 or 10B Worker ran before Steps 2–9 were all approved, discard that output and re-request with the full approved Wave 1 context.
 3. Validate: no field is blank, pending, or "TBD" without a "Not publicly available" statement or a ⚠️ flag
 4. If any section is missing or incomplete, return to that step's Checker with a re-request before rendering
 5. Collect all `RETRY_EXHAUSTED` signals received from Checkers. If any exist, populate the "Data gaps" line in the 📝 DATA QUALITY footer with: `[Step N — field] — [reason]` for each one. If none, write "None".
-6. Tally confidence levels across all 14 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/14 HIGH · 3 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".
+6. Tally confidence levels across all 16 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/16 HIGH · 5 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".
 7. Render the final report for presentation to the user
