@@ -83,10 +83,10 @@ Respond to short corrections immediately. Accept reverts gracefully — treat a 
 
 ## Overview
 
-KServe agent skills monorepo (`@kserve/skills`) — provides AI agent skills for KServe's BD team, installable via:
+KServe agent skills monorepo — provides AI agent skills for KServe's BD team, installable via:
 
 ```bash
-npx skills add @kserve/skills
+npx skills add KServe-FMS/skills
 npx skills add KServe-FMS/skills --skill company-research
 ```
 

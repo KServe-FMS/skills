@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `@kserve/skills` are documented here.
+All notable changes to this repo are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
@@ -11,7 +11,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - PARALLEL Wave 1 worker list now includes Steps 6B, 7B, 7C (was missing from text; diagram was already correct)
 - Progress board template updated to "15 parallel workers" (was "12")
 - Wave 2 announcement and Orchestrator dependency check now reference Steps 10 & 10B
-- README: removed `npx skills add @kserve/skills` — skills CLI only supports GitHub `owner/repo` format; use `npx skills add KServe-FMS/skills`
+- README: install command is `npx skills add KServe-FMS/skills` (skills CLI only supports GitHub `owner/repo` format)
 
 ---
 
@@ -90,7 +90,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.0.1] — 2026-02-28
 
 ### Changed
-- Bumped npm package version to 1.0.1 for registry release
+- Bumped version to 1.0.1
 
 ---
 

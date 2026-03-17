@@ -1,7 +1,5 @@
 # KServe Skills
 
-[![npm](https://img.shields.io/npm/v/@kserve/skills)](https://www.npmjs.com/package/@kserve/skills)
-
 Agent skills for KServe's business development and sales intelligence workflows.
 Compatible with Claude Code, Claude.ai, OpenCode, Codex, and any platform that supports the [skills](https://github.com/vercel-labs/skills) standard.
 
@@ -80,7 +78,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history and [CONTRIBUTING.md](./C
 
 ## Versioning
 
-This package follows semantic versioning:
+This repo follows semantic versioning:
 
 | Bump | When to use |
 |---|---|
