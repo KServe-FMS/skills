@@ -55,7 +55,7 @@ If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 
 **PARALLEL:** Spawn in two waves after user confirms.
 
-**Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14. Each Worker runs its own Checker loop independently.
+**Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14, 16, 17. Each Worker runs its own Checker loop independently.
 
 **Wave 2 — spawn only after ALL Wave 1 workers have been Checker-approved:** Workers 10 (KServe Fit) and 10B (ICP Score). Steps 10 and 10B read the approved outputs from Steps 2–9 before executing. Do not spawn Workers 10 or 10B until Wave 1 is fully complete.
 
@@ -63,8 +63,8 @@ Orchestrator assembles the final report once Workers 10, 10B, and all Wave 1 wor
 
 **PARALLEL — Progress reporting:** After spawning Wave 1, immediately post a status board to the user:
 ```
-Research started for [Company Name]. Running 15 parallel workers:
-⏳ In progress: Steps 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14
+Research started for [Company Name]. Running 17 parallel workers:
+⏳ In progress: Steps 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14, 16, 17
 ⏸️  Waiting to spawn: Steps 10 & 10B (KServe Fit + ICP Score — start after Wave 1 completes)
 I'll update you as sections complete.
 ```
@@ -107,7 +107,7 @@ Please confirm and I'll run the full research.
 
 ### Phase 2 — Full Research (after user confirms)
 
-Run all 14 research steps (Steps 2–15) using the execution mode detected above. Each step follows the **Worker → Checker → Orchestrator** pattern:
+Run all 16 research steps (Steps 2–17) using the execution mode detected above. Each step follows the **Worker → Checker → Orchestrator** pattern:
 
 1. **Worker** gathers data for that step using available web/search tools
 2. **Checker** validates the output against the seven criteria (see Checker Instructions)
@@ -952,7 +952,7 @@ Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📝 DATA QUALITY
-Overall: [e.g., 9/14 fields HIGH · 3 MED · 2 LOW]
+Overall: [e.g., 9/16 fields HIGH · 5 MED · 2 LOW]
 Data gaps: [List any fields that hit retry limit, or "None"]
 Oldest source: [YYYY-MM-DD]
 
@@ -973,7 +973,7 @@ User confirms company (Step 1)
 ┌─────────────────────────────────────────────────────┐
 │    WAVE 1 — SPAWN SIMULTANEOUSLY                    │
 │  Workers: 2, 3, 4, 5, 6, 6B, 7, 7B, 7C             │
-│           8, 9*, 11, 12, 13, 14                     │
+│           8, 9*, 11, 12, 13, 14, 16, 17             │
 │  (*Step 9 waits for Step 8 internally)              │
 │  Post ✓ update after each worker approved           │
 └─────────────────────────────────────────────────────┘
@@ -1010,6 +1010,12 @@ User confirms company (Step 1)
         ...
     ┌────▼─────┐
     │ Step 15  │ Worker → Checker validates → approved ✓
+    └────┬─────┘
+    ┌────▼─────┐
+    │ Step 16  │ Worker → Checker validates → approved ✓
+    └────┬─────┘
+    ┌────▼─────┐
+    │ Step 17  │ Worker → Checker validates → approved ✓
     └────┬─────┘
          │
          ▼
@@ -1061,12 +1067,12 @@ Only approve when all seven criteria are met (or a ⚠️ note and/or `RETRY_EXH
 
 ## Orchestrator Instructions
 
-After all 17 Workers complete and each Checker has approved:
+After all 19 Workers complete and each Checker has approved:
 
 1. Assemble all approved sections into the Output Format template in order
 2. **Before assembling Steps 10 & 10B (KServe Fit + ICP Score):** verify that approved outputs from ALL of Steps 2–9 are present. If any Wave 1 step is still pending, wait. If a Step 10 or 10B Worker ran before Steps 2–9 were all approved, discard that output and re-request with the full approved Wave 1 context.
 3. Validate: no field is blank, pending, or "TBD" without a "Not publicly available" statement or a ⚠️ flag
 4. If any section is missing or incomplete, return to that step's Checker with a re-request before rendering
 5. Collect all `RETRY_EXHAUSTED` signals received from Checkers. If any exist, populate the "Data gaps" line in the 📝 DATA QUALITY footer with: `[Step N — field] — [reason]` for each one. If none, write "None".
-6. Tally confidence levels across all 14 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/14 HIGH · 3 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".
+6. Tally confidence levels across all 16 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/16 HIGH · 5 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".
 7. Render the final report for presentation to the user
