@@ -57,7 +57,9 @@ If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 
 **Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14, 16, 17. Each Worker runs its own Checker loop independently.
 
-**Wave 2 — spawn only after ALL Wave 1 workers have been Checker-approved:** Workers 10 (KServe Fit) and 10B (ICP Score). Steps 10 and 10B read the approved outputs from Steps 2–9 before executing. Do not spawn Workers 10 or 10B until Wave 1 is fully complete.
+**Wave 1.5 — Sanitizer gate (run after ALL Wave 1 workers are Checker-approved):** Before spawning Wave 2, run the Sanitizer across all approved Wave 1 outputs. See Sanitizer Instructions. Pass sanitized outputs to the Orchestrator.
+
+**Wave 2 — spawn only after the Sanitizer gate is complete:** Workers 10 (KServe Fit) and 10B (ICP Score). Steps 10 and 10B read the **sanitized** approved outputs from Steps 2–9 before executing. Do not spawn Workers 10 or 10B until the Sanitizer has completed.
 
 Orchestrator assembles the final report once Workers 10, 10B, and all Wave 1 workers are complete.
 
@@ -70,7 +72,7 @@ I'll update you as sections complete.
 ```
 As each Worker is approved by its Checker, post a one-line update: `✓ [Step name] complete — [1-phrase summary, e.g., "Turnover: ₹847 Cr FY24"]`
 
-When Wave 1 is fully complete: `Wave 1 complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
+When Wave 1 is fully complete: `Wave 1 complete. Running Sanitizer gate…` Then after Sanitizer completes: `Sanitizer complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
 
 **SEQUENTIAL:** Run Steps 2–17 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 17. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first, but in SEQUENTIAL mode this is naturally guaranteed. After Step 17, append the BD Briefing and DATA QUALITY footer to complete the report.
 
@@ -1014,20 +1016,28 @@ User confirms company (Step 1)
 │  Post ✓ update after each worker approved           │
 └─────────────────────────────────────────────────────┘
          │ (each worker ↔ checker loop — 8 criteria)
-         ▼ POST "Wave 1 complete. Spawning Steps 10 & 10B…"
+         ▼ POST "Wave 1 complete. Running Sanitizer gate…"
 ┌─────────────────────────────────────────────────────┐
-│    WAVE 2 — SPAWN AFTER ALL WAVE 1 APPROVED         │
+│    WAVE 1.5 — SANITIZER GATE                        │
+│  Scans all approved Wave 1 outputs                  │
+│  Strips injection patterns                          │
+│  Logs Security events in DATA QUALITY footer        │
+└─────────────────────────────────────────────────────┘
+         ▼ POST "Sanitizer complete. Spawning Steps 10 & 10B…"
+┌─────────────────────────────────────────────────────┐
+│    WAVE 2 — SPAWN AFTER SANITIZER COMPLETE          │
 │  Workers: 10 (KServe Fit), 10B (ICP Score)          │
-│  Read approved outputs from Steps 2–9               │
+│  Read sanitized approved outputs from Steps 2–9     │
 └─────────────────────────────────────────────────────┘
          │ (Wave 2 ↔ checker loop)
          ▼
 ┌─────────────────────────────────────────────────────┐
 │         ORCHESTRATOR                                │
-│  Verify Steps 10 & 10B ran after Wave 1 complete    │
+│  Verify Steps 10 & 10B ran after Sanitizer complete │
 │  Assemble all approved sections in order            │
 │  Validate completeness · Tally confidence           │
-│  Collect RETRY_EXHAUSTED signals                    │
+│  Collect RETRY_EXHAUSTED signals → Data gaps        │
+│  Collect INJECTION_FLAGGED + Sanitizer → Security   │
 │  Render final BD Research Report                    │
 └─────────────────────────────────────────────────────┘
 ```
