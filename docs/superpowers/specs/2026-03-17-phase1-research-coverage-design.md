@@ -22,7 +22,9 @@ Adds 5 new research modules from ROADMAP.md Phase 1 to the company-research skil
 
 ## Step 7B — Extension: Employee Headcount & Growth Trend
 
-**Rename:** "Job Postings & Workforce Signals" (was "Job Postings (Outsourcing Intent Signals)")
+**Step rename (two locations):**
+- Step header: `### Step 7B — Job Postings & Workforce Signals` (was "Job Postings (Outsourcing Intent Signals)")
+- Output format template header: `💼 JOB POSTINGS & WORKFORCE SIGNALS` (was `💼 JOB POSTINGS (Intent Signals)`)
 
 **New content** appended after the existing job postings BD signal line, before the Source line:
 
@@ -43,7 +45,7 @@ Search LinkedIn company page for current employee count and any displayed growth
 - Scaling → outsourcing appetite; pitch capacity and speed
 - Hiring freeze / shrinking → cost-conscious; lead with cost-per-transaction vs. in-house
 
-**Output block** (appended to Step 7B output):
+**Output block** (appended to Step 7B output, after BD signal line, before Source line):
 ```
 LinkedIn Headcount: ~X employees [as of YYYY-MM-DD]
 Trend: Growing / Stable / Shrinking / Insufficient data
@@ -51,7 +53,11 @@ Basis: [e.g., "+18% per LinkedIn over 2 years; corroborated by 23 open roles on 
 BD signal: [scaling pain → outsourcing appetite / freeze → cost-conscious pitch, lead with ROI]
 ```
 
-**Source Priority table update:** Append to Step 7B row — LinkedIn company page (headcount) as primary; Crunchbase range as secondary.
+**Source Priority table — exact revised Step 7B row** (also updates step name in column 1):
+
+| Step | Primary | Secondary | Fallback |
+|---|---|---|---|
+| 7B — Job Postings & Workforce Signals | Naukri (site:naukri.com "[company]") · LinkedIn company page (headcount) | LinkedIn Jobs · Indeed India · Crunchbase (employee range) | Company careers page |
 
 **ICP Score:** "Employee headcount proxy" dimension already references Steps 3, 7, 7B — new LinkedIn data feeds directly into it. No scoring logic change needed.
 
@@ -59,9 +65,11 @@ BD signal: [scaling pain → outsourcing appetite / freeze → cost-conscious pi
 
 ## Step 14 — Extension: Regulatory & Legal Risk + Key Partnerships & Integrations
 
-**Rename:** "M&A, Legal Risk & Key Partnerships" (was "Acquisitions & M&A Activity")
+**Step rename (two locations):**
+- Step header: `### Step 14 — M&A, Funding, Legal Risk & Key Partnerships` (was "Acquisitions & M&A Activity")
+- Output format template header: `🔀 M&A, FUNDING, LEGAL RISK & KEY PARTNERSHIPS` (was `🔀 M&A, FUNDING & OWNERSHIP`)
 
-Two new sub-sections appended after the existing PE ownership / BD signal block.
+Note: "FUNDING" is preserved in both names — the existing M&A/funding/PE ownership content remains unchanged. Two sub-sections are appended after the existing PE ownership / BD signal block.
 
 ---
 
@@ -122,7 +130,11 @@ BD signal: [partner ecosystem direction / referral angle if KServe knows the par
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 ```
 
-**Source Priority table update:** Append to Step 14 row — consumerforum.in, sebi.gov.in, rbi.org.in for regulatory sub-section; company website Partners page, LinkedIn updates for partnerships sub-section.
+**Source Priority table — exact revised Step 14 row:**
+
+| Step | Primary | Secondary | Fallback |
+|---|---|---|---|
+| 14 — M&A, Funding, Legal Risk & Key Partnerships | News (last 12 months) · consumerforum.in · sebi.gov.in · rbi.org.in · Company website Partners page · LinkedIn company updates | Tracxn · Crunchbase · MCA filings · gem.gov.in · Tofler / Zauba Corp (MCA compliance) | ET · Mint · Business Standard |
 
 ---
 
@@ -133,7 +145,7 @@ Source(s): [URLs] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 Knowing which BPO vendors are already embedded changes the pitch angle from "you need this" to "here's why KServe is better."
 
 **Sources (try in order):**
-1. News: `"[company name]" "outsourcing" OR "BPO" OR "outsourced to" OR "BPO partner"` — ET, Mint, Business Standard
+1. News: `"[company name]" "outsourcing" OR "BPO" OR "vendor" OR "BPO partner"` — ET, Mint, Business Standard
 2. Job postings from Step 7B: scan JD language for "coordinate with outsourcing vendor," "manage BPO partner," "work with third-party vendor"
 3. LinkedIn company updates / press releases on company website
 4. General search: `"[company name]" "call center partner" OR "back office partner" OR "collections agency"`
@@ -150,7 +162,7 @@ Knowing which BPO vendors are already embedded changes the pitch angle from "you
 - Non-BPO vendor found (in-house only, freelance) → expansion pitch; they've started outsourcing, KServe can professionalize it
 - KServe-adjacent industry client found → name-drop the relevant case study in outreach
 
-**Checker note:** If no results found after all 4 source attempts, Worker must explicitly state "No results found" — not infer absence from general company maturity signals.
+**Worker note:** If no results found after all 4 source attempts, explicitly state "No outsourcing vendor relationships found in public record" — do not infer absence from general company maturity signals.
 
 **Output block:**
 ```
@@ -166,7 +178,7 @@ Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 | Step | Primary | Secondary | Fallback |
 |---|---|---|---|
-| 16 — Outsourcing Vendors | News (ET · Mint · BS): `"[company]" "BPO" OR "outsourcing"` | Step 7B JD language scan | LinkedIn updates · company website press releases |
+| 16 — Outsourcing Vendors | News (ET · Mint · BS): `"[company]" "outsourcing" OR "BPO" OR "vendor"` | Step 7B JD language scan | LinkedIn updates · company website press releases |
 
 ---
 
@@ -200,6 +212,11 @@ Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 [Or: "No public competitor data found on Tracxn, Crunchbase, or search"]
 BD signal: [case study tie-in / competitive urgency angle]
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
+
+No-data variant (if all sources return nothing):
+No public competitor data found on Tracxn, Crunchbase, or search as of [YYYY-MM-DD].
+BD signal: N/A
+Source(s): Tracxn · Crunchbase · web search | Confidence: LOW | Checked: YYYY-MM-DD
 ```
 
 **Source Priority table row:**
@@ -221,14 +238,22 @@ Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 **Wave 2** — unchanged: Steps 10 and 10B only.
 
 **Progress status board** — update after Wave 1 spawn:
-- "Running 17 parallel workers" (was 15)
+- "Running 17 parallel workers" (was 15) — this is the Wave 1 count only
 - In-progress line: `⏳ In progress: Steps 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14, 16, 17`
 
-**Orchestrator worker count** — update "After all 17 Workers complete" → "After all 19 Workers complete"
+**Orchestrator worker count** — the Orchestrator section currently reads "After all 17 Workers complete." This refers to the total across both waves (old Wave 1: 15 + Wave 2: 2 = 17). Update to "After all 19 Workers complete" (new Wave 1: 17 + Wave 2: 2 = 19).
 
-### Step 14 rename — two locations
-1. Step header: `### Step 14 — M&A, Legal Risk & Key Partnerships`
-2. Output format section header: `🔀 M&A, LEGAL RISK & KEY PARTNERSHIPS`
+> Note: "17 parallel workers" (progress board = Wave 1 only) and "19 Workers complete" (Orchestrator = all waves) are intentionally different numbers. Do not conflate them.
+
+### Step renames — two steps, two locations each
+
+**Step 7B (two locations):**
+1. Step header: `### Step 7B — Job Postings & Workforce Signals`
+2. Output format template header: `💼 JOB POSTINGS & WORKFORCE SIGNALS`
+
+**Step 14 (two locations):**
+1. Step header: `### Step 14 — M&A, Funding, Legal Risk & Key Partnerships`
+2. Output format template header: `🔀 M&A, FUNDING, LEGAL RISK & KEY PARTNERSHIPS`
 
 ### Output format template — three insertion points
 
@@ -238,9 +263,41 @@ Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
    - `🏭 CURRENT OUTSOURCING VENDORS`
    - `🏆 COMPETITIVE LANDSCAPE`
 
+### SEQUENTIAL mode step count — update line ~110
+
+Current text: `"Run all 14 research steps (Steps 2–15)"`
+Updated text: `"Run all 16 research steps (Steps 2–17)"`
+
+### DATA QUALITY footer and Orchestrator section count
+
+**DATA QUALITY footer example** (output template):
+- Current: `9/14 fields HIGH · 3 MED · 2 LOW`
+- Update to: `9/16 fields HIGH · 5 MED · 2 LOW`
+
+**Orchestrator instructions** (Step 6 of Orchestrator) — full updated line text:
+
+> `Tally confidence levels across all 16 sections and populate the "Overall" line in the DATA QUALITY footer (e.g., `9/16 HIGH · 5 MED · 2 LOW`). Find the oldest source date across all sections and populate "Oldest source".`
+
+Both the prose ("all 14 sections" → "all 16 sections") and the inline example (`9/14` → `9/16`) must be updated on the same line.
+
+### PARALLEL architecture ASCII diagram — update Wave 1 worker lines
+
+The PARALLEL architecture diagram in the Multi-Agent Architecture section shows Wave 1 workers across two lines. Update to include Workers 16 and 17:
+
+Current:
+```
+│  Workers: 2, 3, 4, 5, 6, 6B, 7, 7B, 7C             │
+│           8, 9*, 11, 12, 13, 14                     │
+```
+
+Updated:
+```
+│  Workers: 2, 3, 4, 5, 6, 6B, 7, 7B, 7C             │
+│           8, 9*, 11, 12, 13, 14, 16, 17             │
+```
+
 ### No changes required
 - Checker criteria (all 7 apply as-is to new steps)
 - ICP Score dimensions and scoring logic
 - Step 10 / 10B dependency logic
 - Wave 2 spawn rules
-- SEQUENTIAL mode step order (Steps 16 and 17 run after Step 15 naturally)
