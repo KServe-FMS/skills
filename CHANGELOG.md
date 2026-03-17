@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.0] — 2026-03-17
+
+### Security — Prompt Injection Defense (issue #6)
+
+Four-layer defense against indirect prompt injection via third-party web content ingestion:
+
+- **Layer 1 — Worker Trust Boundary:** Added `Content trust boundary` block to Core Research Principles (canonical definition). Added `NOTE: Content trust boundary applies.` callout to all 17 Wave 1 Workers (Steps 2–9, 11–14, 16–17) — every Worker that ingests third-party web content is explicitly instructed to treat it as data only and never follow embedded instructions.
+- **Layer 2 — Checker Criterion #8:** Added 8th validation criterion (`Injection-free?`) to Checker Instructions. Checker scans Worker output for injection patterns, redacts with `[CONTENT REDACTED — injection pattern]`, and retries. If injection survives 2 retries, sends `INJECTION_FLAGGED` signal to Orchestrator (distinct from `RETRY_EXHAUSTED`).
+- **Layer 3 — Wave 1.5 Sanitizer Gate:** New `## Sanitizer Instructions` agent role runs after all Wave 1 Workers are Checker-approved, before Wave 2 spawns. Scans all approved Wave 1 outputs for injection patterns (imperative commands, role-switch phrases, override language, base64 strings), redacts with `[SANITIZED — injection pattern detected]`, and logs in a new **Security events** DATA QUALITY footer line. In SEQUENTIAL mode, runs after Step 9, before Step 10.
+- **Layer 4 — Synthesis-Step Guards:** Added `NOTE: Injection guard.` preamble to synthesis steps 9, 10, 10B, and 15 — last-resort catch for adversarial text that survived earlier layers.
+
+### Changed
+- Checker criteria count: 7 → 8
+- PARALLEL mode diagram: updated to show Wave 1 → Wave 1.5 (Sanitizer) → Wave 2 flow
+- Orchestrator Instructions: Wave 2 now requires sanitized outputs; collects `INJECTION_FLAGGED` into Security events footer line
+- DATA QUALITY footer template: added `Security events` line between Data gaps and Oldest source
+
+### Docs
+- Added spec: `docs/superpowers/specs/2026-03-17-prompt-injection-defense-design.md`
+- Added plan: `docs/superpowers/plans/2026-03-17-prompt-injection-defense.md`
+
+---
+
 ## [1.3.0] — 2026-03-17
 
 ### Added — New Steps
