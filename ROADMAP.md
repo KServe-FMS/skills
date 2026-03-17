@@ -7,13 +7,13 @@ Checklist of improvements to elevate the skill to enterprise grade. Items are gr
 ## Phase 1 — Research Coverage
 
 ### New Data Modules (new steps)
-- [ ] **Employee Headcount & Growth Trend** — LinkedIn `#employees` over time; signals scaling pain or hiring freeze
+- [x] **Employee Headcount & Growth Trend** — LinkedIn `#employees` over time; signals scaling pain or hiring freeze *(shipped: Step 7B extension)*
 - [x] **Technology Stack Detection** — BuiltWith/Wappalyzer + job postings to detect CRMs, ERPs, cloud providers; reveals digital maturity and integration opportunities *(shipped: Step 7C)*
-- [ ] **Current Outsourcing Vendors** — detect competitors already embedded via news/announcements; changes the pitch angle entirely
+- [x] **Current Outsourcing Vendors** — detect competitors already embedded via news/announcements; changes the pitch angle entirely *(shipped: Step 16)*
 - [x] **Job Postings as Intent Signals** — live roles on Naukri/LinkedIn reveal what they're hiring vs. what KServe could replace or augment *(shipped: Step 7B)*
-- [ ] **Regulatory & Legal Risk** — MCA compliance defaults, consumer court cases, SEBI/RBI notices; distress is both risk and opportunity
-- [ ] **Competitive Landscape** — top 3 competitors; positions KServe to cite relevant case studies
-- [ ] **Key Partnerships & Integrations** — strategic alliances signal direction and potential entry points
+- [x] **Regulatory & Legal Risk** — MCA compliance defaults, consumer court cases, SEBI/RBI notices; distress is both risk and opportunity *(shipped: Step 14 extension)*
+- [x] **Competitive Landscape** — top 3 competitors; positions KServe to cite relevant case studies *(shipped: Step 17)*
+- [x] **Key Partnerships & Integrations** — strategic alliances signal direction and potential entry points *(shipped: Step 14 extension)*
 - [ ] **Import/Export Data** — Zauba/Volza trade activity; relevant for logistics and supply chain verticals
 
 ### Depth Improvements to Existing Steps
