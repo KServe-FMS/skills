@@ -103,3 +103,43 @@ This is the enterprise master document for the `company-research` skill. It is t
 - [ ] **Source Archiving Instruction** — instruct Workers to note if a source URL returns a 404 or has materially changed since the report was run — enables source recovery and audit trail for compliance reviews
 - [ ] **Conflicting Source Resolution Log** — when sources conflict, require Worker to log all versions in a structured table (Source A vs. Source B vs. Authority winner with rationale) — makes resolution reasoning auditable and reproducible
 - [ ] **DATA QUALITY Scorecard Expansion** — extend the DATA QUALITY footer with: total sources cited, total unique domains, share of MCA-verified fields, and newest source date alongside oldest — gives a richer reliability picture at a glance
+
+---
+
+## Phase 4 — Workflow & Architecture
+
+- [x] **Streaming Partial Delivery** — in SEQUENTIAL mode, present each completed section immediately rather than buffering until all steps finish *(shipped: Enhancement 2.8)*
+- [x] **Formal Dependency Graph** — declare a DAG for PARALLEL mode; explicit two-wave spawning enforces Step 10/10B dependency *(shipped: Fix 1.2 + Orchestrator validation step)*
+- [x] **Live Progress Reporting** — in PARALLEL mode, a status board after Wave 1 spawn; per-step ✓ updates as Workers complete *(shipped: Enhancement 2.7)*
+- [x] **Rate Limit Awareness** — detect 429/throttle responses from Tracxn and LinkedIn; switch sources immediately rather than retrying the same endpoint *(shipped: Enhancement 2.6)*
+- [x] **Graceful Partial Report** — if 4+ steps fail, Step 15 opens with a partial-data warning header *(shipped: Fix 1.4)*
+- [ ] **Batch Mode** — research a list of companies (CSV/list input) in a single invocation, one report per company — critical for vertical campaign execution; BD teams need to process prospect lists, not single companies
+- [ ] **Refresh/Delta Mode** — re-research a previously profiled company, surfacing only what changed since the last report — reduces research time for account managers re-engaging a prospect and highlights new trigger events
+- [ ] **Watchlist/Monitor Mode** — periodically re-check a shortlisted prospect for trigger events (funding round, leadership change, bad press spike, new KServe-relevant job postings) — converts a nurture list into an active signal feed
+- [ ] **Tool Availability Detection** — if a primary search tool is unavailable (not rate-limited, but absent entirely), explicitly try the secondary, then note the gap — prevents silent failures that produce incomplete reports without flagging the cause
+- [ ] **Step Timeout Handling** — define a maximum execution time per Worker (recommended: 90 seconds); if exceeded, Worker submits best-available output with a `⚠️ TIMEOUT` note rather than blocking the pipeline indefinitely
+- [ ] **Partial-Run Resume Protocol** — if a PARALLEL run is interrupted mid-wave, define a resume protocol: completed Workers' outputs are cached and re-used; only incomplete Workers re-run — prevents full re-research on interruption
+- [ ] **SEQUENTIAL → PARALLEL Auto-Upgrade Detection** — at runtime, detect if the executing platform has gained subagent capability since SEQUENTIAL was assumed; offer to re-run in PARALLEL for speed — prevents users from running slow sequential mode on platforms that support parallelism
+- [ ] **Source Failover Chain Automation** — if a Worker's primary source returns 429/access-denied, automatically advance to the next source in the Step's Source Priority table without returning to user — currently documented as a principle but not mechanically enforced
+- [ ] **Worker Output Schema Validation** — after each Worker completes, validate output against a per-step schema (required fields present, source cited, confidence label present) — prevents malformed Worker output from reaching the Checker and causing downstream errors
+- [ ] **Dependency-Aware Wave Scheduling** — extend the Wave 1 / Wave 2 model to support finer-grained internal dependencies (Step 9 must wait for Step 8; Step 6B must wait for Step 6; Step 10B must wait for Step 10) — currently these are implicit; making them explicit prevents race conditions in PARALLEL mode
+- [ ] **Idempotent Re-Run Support** — define behavior when the same company is researched twice in the same session; deduplicate outputs and flag if cached data is <24 hours old — prevents duplicate API consumption and conflicting report versions
+- [ ] **Orchestrator Completeness Health Check** — before assembling the final report, Orchestrator runs a structured completeness checklist: all 16 research steps present, Wave 2 ran post-Sanitizer, no steps in pending state, all RETRY_EXHAUSTED signals collected — currently partially specified; formalizing prevents silent omissions in edge cases
+- [ ] **Worker Concurrency Limit** — define a maximum number of simultaneous Workers for platforms with rate limits (recommended: 8 concurrent) — prevents burst-spawning that triggers platform-level throttling and cascading failures
+
+---
+
+## Phase 5 — Output & Delivery
+
+- [ ] **CRM-Ready JSON Export** — structured JSON block alongside the markdown report with field-mapped data ready for Salesforce/HubSpot/Zoho import — enables zero-friction CRM entry without manual copy-paste of research findings
+- [ ] **Executive 1-Pager** — condensed output variant (≤300 words) for leadership review: ICP score, top 2 service fits, Next Best Action, and one risk flag — senior leadership doesn't read full reports; this format drives decisions at the top
+- [ ] **Campaign Pitch Brief** — templated output optimized for cold outreach sequencing: Subject line → Hook (specific research finding) → Proof point (KServe case study angle) → CTA — removes the SDR copywriting step entirely
+- [ ] **Risk Flag Consolidation Section** — explicit consolidated risk flags at the top of the report: acquisition freeze signal, regulatory risk, review spike, PE exit pressure — currently buried across individual step outputs; surfacing them up-front prevents BD reps from missing critical signals
+- [ ] **Audit Trail** — log each source URL, timestamp, and which step consumed it in a structured appendix — enables compliance review and source traceability for enterprise clients who ask how the intelligence was gathered
+- [ ] **Markdown → PDF/HTML Rendering Instruction** — add an explicit note to the report instructing the user how to render it as a formatted PDF or HTML page using the platform's export capability — makes reports shareable with non-AI-platform stakeholders
+- [ ] **Multi-Language BD Briefing** — generate the BD Intelligence Briefing section (Step 15) in the prospect's primary business language alongside English — relevant for regional language prospects in India (Hindi, Marathi, Tamil) and for global accounts where English is not the business language
+- [ ] **Report Version History** — track the date when a company was last researched and attach a diff summary when a report is re-run — enables account managers to quickly identify what triggered re-engagement
+- [ ] **Report Summary Tile** — a 5-field at-a-glance card (Company, ICP Score, Top Service Fit, Next Best Action, Data Freshness) for use in Slack digests or CRM dashboard views — gives BD managers a portfolio-level view without opening individual reports
+- [ ] **Confidence-Weighted Report Narrative** — adjust narrative confidence language based on field confidence levels (HIGH → stated as fact; MED → "signals suggest"; LOW → "early indication") — prevents BD reps from presenting LOW-confidence data as certain facts during client conversations
+- [ ] **Customizable Section Toggle** — allow the user to request a subset of sections (e.g., "just the BD Briefing and ICP Score") without running all 16 steps — reduces research time for targeted use cases like quick pre-call prep
+- [ ] **Timestamped Source Cache** — attach a retrieval timestamp to each cited source URL in the report — enables a future "source freshness check" run that detects broken or updated sources without re-running full research
