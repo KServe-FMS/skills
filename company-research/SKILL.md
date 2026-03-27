@@ -51,7 +51,7 @@ Detect your execution mode before starting. Apply it consistently throughout.
 | Mode | When to use | Platforms |
 |---|---|---|
 | **PARALLEL** | You can spawn independent subagents that run simultaneously | Claude Code (`Task` tool) · OpenCode (`Task`) · Codex agent (`spawn_agent`) · Any multi-agent platform |
-| **SEQUENTIAL** | Single-thread only — one step at a time | Claude.ai · Cowork · Codex chat · Any single-thread assistant |
+| **SEQUENTIAL** | Single-thread only — one step at a time | Claude.ai · Claude Desktop (MCP) · Cowork · Codex chat · Cursor · VS Code Agent · Cline · Continue.dev · Windsurf · Any single-thread assistant |
 
 If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 
@@ -140,6 +140,12 @@ Tofler, Zauba Corp, and similar aggregators pull from MCA and are acceptable sec
 **BD framing throughout.** Every section must be written with the lens of: *"How does this help KServe win this account?"* — not raw data, but insight.
 
 **Graceful degradation.** If a tool or data source is unavailable, note it clearly in that section and move on. Never halt the entire report because one step hit a wall.
+
+**Tool class unavailable.** If a required tool class is entirely absent from the executing environment — not rate-limited or gated, but simply not available — halt before starting and notify the user:
+
+> ⚠️ Required tool missing: [web search / file write / subagents]. This skill cannot produce a reliable report without it. Please check your platform configuration or switch to a supported environment (see Platform Execution Mode table above).
+
+Do not attempt to proceed in a partially capable environment. An incomplete report handed to BD is actively harmful.
 
 **Rate-limited or gated sources.** If a source returns a 429, access-denied, or login-required response:
 1. Do not retry the same source more than once immediately.
