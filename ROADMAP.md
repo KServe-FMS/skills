@@ -1,6 +1,9 @@
-# Company Research Skill — Enterprise Roadmap
+# Company Research Skill — Enterprise ROADMAP
 
-Checklist of improvements to elevate the skill to enterprise grade. Items are grouped by theme and roughly ordered by impact within each group.
+This is the enterprise master document for the `company-research` skill. It is the single source of truth for all shipped features and forward-looking improvements.
+
+**Current skill version:** v1.4.0
+**How to read this doc:** `[x]` = shipped · `[ ]` = roadmap · items are grouped by theme and roughly ordered by impact within each group · shipped items include `*(shipped: ...)` notes for traceability
 
 ---
 
@@ -14,73 +17,44 @@ Checklist of improvements to elevate the skill to enterprise grade. Items are gr
 - [x] **Regulatory & Legal Risk** — MCA compliance defaults, consumer court cases, SEBI/RBI notices; distress is both risk and opportunity *(shipped: Step 14 extension)*
 - [x] **Competitive Landscape** — top 3 competitors; positions KServe to cite relevant case studies *(shipped: Step 17)*
 - [x] **Key Partnerships & Integrations** — strategic alliances signal direction and potential entry points *(shipped: Step 14 extension)*
-- [ ] **Import/Export Data** — Zauba/Volza trade activity; relevant for logistics and supply chain verticals
+- [ ] **Import/Export Data** — Zauba/Volza trade activity; relevant for logistics and supply chain verticals — high-volume importers/exporters have complex back-office needs KServe can absorb
+- [ ] **News Sentiment Scoring** — score news articles from the last 12 months as Positive / Neutral / Negative and classify trend direction — a worsening news sentiment curve is a stronger outreach hook than a static mention count
+- [ ] **Patent & IP Activity** — search the Indian Patent Office (ipindia.gov.in) for recent filings — signals R&D investment and product-first culture, which shifts the pitch angle from back-office toward market research and lead generation
+- [ ] **ESG / Sustainability Signals** — check for CSR filings (MCA Schedule VII), sustainability reports, and BRSR disclosures for listed companies — ESG-committed companies face higher compliance documentation load, a direct KServe back-office opportunity
 
 ### Depth Improvements to Existing Steps
 - [x] **Step 6 — Directors** — add LinkedIn profile URLs, tenure, career history, and public quotes; currently only static MCA data *(shipped: Enhancement 2.1 + Step 6B)*
 - [x] **Step 8 — Reviews** — add sentiment trend over time (improving or worsening?), not just themes; a worsening trend is a stronger trigger signal *(shipped: Enhancement 2.3)*
-- [ ] **Step 12 — Social Media** — add posting frequency trend, content themes, and paid ad activity via Facebook Ad Library
 - [x] **Step 13 — Tracxn** — add Crunchbase employee count, funding timeline, and investor tier classification; currently too shallow *(shipped: Enhancement 2.4)*
 - [x] **Step 14 — M&A** — extend to government contracts/tenders (GEM portal) and PE ownership structure *(shipped: Enhancement 2.5)*
+- [ ] **Step 12 — Social Media Depth** — add posting frequency trend, content themes, and paid ad activity via Facebook Ad Library — paid ad spend is a direct proxy for marketing budget availability and digital maturity
+- [ ] **Step 8A — App Store Trend Analysis** — extend app review analysis to detect version-specific rating spikes (a sudden drop tied to a specific app version = known product regression) — version-correlated problems signal an ops team under pressure
+- [ ] **Step 6 — Board Composition Signal** — classify board as Founder-dominated / Institutional / Mixed and note implications for decision-making speed — founder-dominated boards close faster; institutional boards require multi-stakeholder buy-in
+- [ ] **Step 3 — Turnover Trend (3-Year)** — pull 3 consecutive years of MCA revenue filings instead of just the latest — a declining revenue trend changes the pitch from growth-support to cost-reduction
+- [ ] **Step 7B — Attrition Signal from JDs** — flag JDs that mention "replacement hire," "immediate joiners," or "notice period buyout" as high-attrition signals — high attrition in a function KServe serves is a direct outsourcing trigger
 
----
+### India-Primary Additions
+- [ ] **GST Registration & Compliance Status** — search the GSTIN database for registration status, return-filing compliance, and any cancellation or suspension notices — GST non-compliance signals working capital stress and is an outsourcing receptivity trigger
+- [ ] **EPFO Filing Signals** — cross-reference EPFO monthly employer ECR filings to triangulate actual headcount independent of LinkedIn estimates — more reliable for blue-collar-heavy industries where LinkedIn employee counts are systematically understated
+- [ ] **CIBIL / Credit Bureau Risk Flag** — search for public CIBIL defaulter mentions, RBI NPA classification, or SARFAESI action — high credit risk is a distress signal that makes cost-reduction pitches (KServe's collections and back-office) immediately relevant
+- [ ] **eCourts & NCLAT Case Search** — search eCourts India for active civil/commercial cases and NCLAT for insolvency/winding-up proceedings — active litigation signals operational stress and may indicate a freeze on new vendor commitments
+- [ ] **Startup India / DPIIT Recognition Status** — check DPIIT startup recognition certificate status — recognized startups get regulatory relaxations and disproportionately need scale-without-headcount solutions that KServe provides
+- [ ] **GeM Supplier Profile Depth** — extend Step 14 GeM check with bid history, active tenders, and awarded contract values — government contract volume signals compliance maturity and procurement cycle length, both of which shape the KServe pitch approach
+- [ ] **SEBI Listed Entity Depth** — for BSE/NSE-listed companies, pull shareholding pattern, promoter pledge percentage, and quarterly results trend — promoter pledge above 50% is a financial stress indicator that elevates outsourcing receptivity
+- [ ] **CIN-Level Subsidiary & Group Mapping** — search MCA for all entities sharing the same promoter DIN to reveal group company structure — group presence expands the total addressable relationship: win one entity, pitch the group
+- [ ] **Regional Language Review Mining** — search for reviews on Sharechat, Koo, regional Facebook groups (Hindi/Marathi/Tamil/Telugu), and local forums — captures sentiment invisible on English-only platforms, especially relevant for tier-2/3 city brands
+- [ ] **Tier-2/3 City Intelligence** — for companies with significant non-metro operations, check local IndiaMart regional listings, JustDial city-level pages, and local news — tier-2 operations often have weaker customer service infrastructure, a stronger KServe entry point
+- [ ] **NASSCOM / FICCI / CII / ASSOCHAM Membership** — check industry body membership and conference speaking history — shared membership creates warm referral angles; speaking history reveals the executive's thought leadership priorities
+- [ ] **ROC Annual Return Depth** — extend MCA lookup to include MGT-7 annual return for related-party transactions and significant changes in shareholding — related-party transaction volume signals group complexity that increases back-office load
 
-## Phase 2 — BD Intelligence
+### Global Company Support (secondary capability)
+*These items extend the skill for non-India prospects. They do not change India-first behavior — they activate when the company's primary registration is outside India.*
 
-- [x] **ICP Scoring** — quantified Ideal Customer Profile score (1–100) combining company size, industry match, pain points, growth signals, and tech maturity; gives BD a ranked priority list *(shipped: Step 10B)*
-- [x] **Account Tiering** — classify as Tier 1 / 2 / 3 with explicit criteria so BD knows whether to assign a senior AE or an SDR *(shipped: Step 10B tier thresholds)*
-- [ ] **Deal Size Estimation** — estimate outsourcing contract value range based on headcount, revenue, and service fit; helps BD prioritize pipeline
-- [ ] **BANT Pre-qualification** — Budget (revenue/funding), Authority (director mapping), Need (pain points/jobs), Timeline (growth events); structured for CRM entry
-- [x] **Decision-Maker Dossiers** — for each BD-relevant director, a 3-line brief: background, LinkedIn activity pattern, likely objection *(shipped: Step 6B)*
-- [ ] **Personalized Outreach Templates** — one email draft per top decision-maker using research findings as hooks, not generic copy
-- [ ] **Competitive Positioning** — if they already use a competitor BPO, provide differentiation angle; currently the skill ignores competitive context
-- [ ] **Expanded Objection Bank** — Step 15D caps at 2–3; extend to cover cost, trust, data security, cultural fit, and incumbent vendor loyalty
-- [x] **Next Best Action** — a single ranked recommendation at the top of the report synthesizing all research into one concrete action (e.g., "Call the COO first — 3 open CX JDs on Naukri") *(shipped: Step 15E)*
-
----
-
-## Phase 3 — Data Quality & Validation ✅ COMPLETE (shipped in v1.0.2 — 2026-03-09)
-
-- [x] **Per-Field Confidence Scoring** — replace single overall confidence level with per-field scores (e.g., `Turnover: HIGH [MCA-verified]`, `Headcount: LOW [LinkedIn estimate]`)
-- [x] **Per-Field Freshness Timestamps** — each data point carries its source date, not just a report-level "data age" summary
-- [x] **Source Diversity Enforcement** — Checker flags over-reliance on a single aggregator; require at least 2 independent sources for high-confidence fields
-- [x] **Contradiction Detection Protocol** — explicit logic for revenue contradictions across sources, director mismatches, date inconsistencies; beyond current MCA vs. website address case
-- [x] **6th Checker Criterion: BD Relevance** — "Does this output answer: *why should KServe reach out NOW?*"; prevents technically complete but strategically empty sections from passing
-- [x] **Anti-Hallucination Guardrail** — explicit instruction: if search returns zero results, Worker must state "No results found" — not infer from context
-- [x] **Retry Budget Surface** — when a Worker exhausts its 2-retry limit, the Orchestrator must receive and flag that exhaustion explicitly in the final report
-
----
-
-## Phase 4 — Workflow & Architecture
-
-- [ ] **Batch Mode** — research a list of companies (CSV/list input) in a single invocation, one report per company; critical for vertical campaign execution
-- [ ] **Refresh/Delta Mode** — re-research a previously profiled company, surfacing only what changed since the last report
-- [ ] **Watchlist/Monitor Mode** — periodically re-check a shortlisted prospect for trigger events (funding, leadership change, bad press spike)
-- [x] **Streaming Partial Delivery** — in SEQUENTIAL mode, present each completed section immediately rather than buffering until all steps finish *(shipped: Enhancement 2.8)*
-- [x] **Formal Dependency Graph** — declare a DAG for PARALLEL mode; explicit two-wave spawning enforces Step 10/10B dependency *(shipped: Fix 1.2 + Orchestrator validation step)*
-- [x] **Live Progress Reporting** — in PARALLEL mode, a status board after Wave 1 spawn; per-step ✓ updates as Workers complete *(shipped: Enhancement 2.7)*
-- [ ] **Tool Availability Detection** — if primary search tool is unavailable, explicitly try secondary, then note gap; prevents silent failures
-- [x] **Rate Limit Awareness** — detect 429/throttle responses from Tracxn and LinkedIn; switch sources immediately rather than retrying the same endpoint *(shipped: Enhancement 2.6)*
-- [x] **Graceful Partial Report** — if 4+ steps fail, Step 15 opens with a partial-data warning header *(shipped: Fix 1.4)*
-
----
-
-## Phase 5 — Output & Delivery
-
-- [ ] **CRM-Ready JSON Export** — structured JSON block alongside the markdown report with field-mapped data ready for Salesforce/HubSpot import
-- [ ] **Executive 1-Pager** — condensed output variant (≤300 words) for leadership review; single prioritized synthesis
-- [ ] **Campaign Pitch Brief** — templated output optimized for cold outreach sequencing: Subject line → Hook → Proof point → CTA
-- [ ] **Risk Flag Section** — explicit consolidated flags: acquisition freeze signal, regulatory risk, review spike; currently buried in individual step outputs
-- [ ] **Audit Trail** — log each source URL, timestamp, and which step consumed it; enables compliance review and source traceability
-
----
-
-## Phase 6 — Platform & Integration
-
-- [ ] **CRM Record Creation** — post-research, offer to create a CRM record via API (Salesforce/HubSpot)
-- [ ] **Slack/Email Delivery** — send completed report to a team channel or BD rep's inbox; useful for async/batch research runs
-- [ ] **Multi-Language Output** — generate the BD briefing section in the prospect's primary business language alongside English for international prospects
-
----
-
-**Total items: 46**
+- [ ] **Global Registry Adapter** — detect the company's home country and route to the appropriate registry: Companies House (UK), SEC EDGAR (US), ASIC (Australia), ACRA (Singapore), RCS (France), Handelsregister (Germany) instead of MCA — registry-agnostic research enables KServe to pursue international accounts without manual source substitution
+- [ ] **Multi-Currency Revenue Normalization** — convert foreign-currency revenue to INR at filing-date exchange rate with source citation — enables ICP Score comparison across geographies without apples-to-oranges revenue band errors
+- [ ] **International Review Platforms** — add G2, Capterra, Software Advice, BBB (US), Trustpilot Global, ProductReview (AU), and Yelp to Step 8's source table for non-India companies — review coverage should not degrade when researching a global prospect
+- [ ] **Global Job Boards** — add LinkedIn Global, Glassdoor Jobs, Indeed.com (global), Seek (AU), Reed (UK), and StepStone (EU) to Step 7B source table — hiring signals are geography-agnostic; the same KServe-relevant role detection logic applies
+- [ ] **International Regulatory Risk Signals** — check SEC enforcement orders (US), FCA Financial Services Register (UK), ASIC infringement notices (AU), GDPR fines (EU via GDPR.eu enforcement tracker), and OFAC sanctions list — analogous to MCA/SEBI/RBI checks; regulatory distress creates urgency regardless of geography
+- [ ] **Global BPO Vendor Detection** — extend Step 16 vendor search to include international BPO names (Accenture BPO, WNS, Concentrix, Teleperformance, EXL, Sutherland, Conduent) in addition to India-focused vendors — displacement pitch angle and differentiation argument change materially for global incumbent vendors
+- [ ] **International News Coverage** — add Reuters, Bloomberg, FT, WSJ, TechCrunch, and local country-specific business press to Step 14 source table for non-India companies — ET/Mint/Business Standard do not cover global companies at depth
+- [ ] **Country-Specific ICP Score Calibration** — adjust ICP Score revenue band thresholds for non-India companies (sweet spot: $5M–$100M USD equivalent rather than ₹50–500 Cr) — prevents systematic ICP score errors when comparing USD/EUR revenue against INR-calibrated thresholds
