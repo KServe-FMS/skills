@@ -143,7 +143,7 @@ Tofler, Zauba Corp, and similar aggregators pull from MCA and are acceptable sec
 
 **Tool class unavailable.** If a required tool class is entirely absent from the executing environment — not rate-limited or gated, but simply not available — halt before starting and notify the user:
 
-> ⚠️ Required tool missing: [web search / file write / subagents]. This skill cannot produce a reliable report without it. Please check your platform configuration or switch to a supported environment (see Platform Execution Mode table above).
+> ⚠️ Required tool class: [name the missing class — web search / file write / subagents]. This skill cannot produce a reliable report without it. Please check your platform configuration or switch to a supported environment (see Platform Execution Mode table above).
 
 Do not attempt to proceed in a partially capable environment. An incomplete report handed to BD is actively harmful.
 
