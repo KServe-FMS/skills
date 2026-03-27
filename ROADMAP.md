@@ -143,3 +143,18 @@ This is the enterprise master document for the `company-research` skill. It is t
 - [ ] **Confidence-Weighted Report Narrative** — adjust narrative confidence language based on field confidence levels (HIGH → stated as fact; MED → "signals suggest"; LOW → "early indication") — prevents BD reps from presenting LOW-confidence data as certain facts during client conversations
 - [ ] **Customizable Section Toggle** — allow the user to request a subset of sections (e.g., "just the BD Briefing and ICP Score") without running all 16 steps — reduces research time for targeted use cases like quick pre-call prep
 - [ ] **Timestamped Source Cache** — attach a retrieval timestamp to each cited source URL in the report — enables a future "source freshness check" run that detects broken or updated sources without re-running full research
+
+---
+
+## Phase 6 — Platform & Integration
+
+- [ ] **CRM Record Creation** — post-research, offer to create a CRM record via API (Salesforce/HubSpot/Zoho) using the JSON export from Phase 5 — zero-friction pipeline entry; the research run and CRM record creation become a single action
+- [ ] **Slack/Email Delivery** — send the completed report (or the Summary Tile from Phase 5) to a team Slack channel or the BD rep's inbox — useful for async/batch research runs where the rep isn't watching the terminal
+- [ ] **Multi-Language Output** — generate the BD briefing section in the prospect's primary business language alongside English — extends the multi-language item from Phase 5 with a platform-delivered bilingual format
+- [ ] **Webhook Trigger Output** — after completing a research run, POST a structured payload to a configured webhook URL — enables integration with n8n, Zapier, Make.com, or custom pipelines without requiring CRM API credentials
+- [ ] **API-First Output Schema** — define and document a stable JSON schema for the research report output (field names, types, nested objects) — enables programmatic consumption by downstream tools without brittle markdown parsing
+- [ ] **HubSpot Native Integration** — map research output fields to HubSpot Contact and Company object properties and auto-populate via HubSpot API — highest-priority CRM integration given KServe's likely stack; reduces data entry to zero
+- [ ] **Salesforce Integration** — map to Salesforce Lead and Account object fields; expose as a Flow-callable action — covers enterprise BD teams running on SFDC who cannot switch CRMs
+- [ ] **Google Sheets Export** — write research output to a new Google Sheet row with column headers matching the report sections — accessible to teams not using a formal CRM; enables lightweight prospect tracking without additional tooling
+- [ ] **Notification Trigger for Watchlist Events** — when Watchlist/Monitor Mode (Phase 4) detects a trigger event, push a notification to Slack or email with the specific signal and the recommended action from Step 15E — turns passive monitoring into active BD prompts
+- [ ] **MCP Server Interface** — expose the company-research skill as an MCP tool callable from Claude Desktop, Cursor, or any MCP-compatible client — extends reach beyond Claude Code and Claude.ai to the full MCP ecosystem without skill duplication
