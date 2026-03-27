@@ -1,19 +1,21 @@
 ---
 name: company-research
 description: >
-  Comprehensive BD intelligence research skill for KServe's business development team.
-  Use this skill whenever a user provides a company name (and optionally a website or address)
-  and wants to research that company as a potential outsourcing client. Triggers on phrases like
-  "research [company]", "look up [company]", "get me info on [company]", "do a BD profile for [company]",
-  "check out this company", or any request to investigate a prospect company for sales or outreach purposes.
-  Always use this skill when the context is about finding potential clients for KServe's BPO services.
+  Trigger this skill any time someone drops a company name in a sales or BD context — even
+  if they don't say "research". Phrases like "check out [company]", "who should I call at
+  [company]", "what do we know about [company]", "look up [company]", "get me a profile on
+  [company]", or simply naming a company while discussing a prospect or outreach plan. Don't
+  wait for an explicit request — if the context is prospecting, account intelligence, pre-call
+  prep, or finding potential outsourcing clients for KServe, trigger immediately. Produces a
+  full BD intelligence report: company size, financials, directors, reviews, ICP score, and a
+  next-best-action recommendation.
 ---
 
 # KServe Company Research Skill
 
 This skill produces a comprehensive BD intelligence report on a prospect company so KServe's business development team can reach out to the right people with the right message. The output is a structured chat summary with verified sources for every data point.
 
-**Compatible with:** Claude.ai · Claude Code · Cowork · OpenCode · Codex · Any AI agent platform
+**Compatible with:** Claude.ai · Claude Code · Claude Desktop (MCP) · Cowork · OpenCode · Codex · Cursor · VS Code Agent · Any AI agent platform
 
 ---
 
