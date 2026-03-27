@@ -58,3 +58,48 @@ This is the enterprise master document for the `company-research` skill. It is t
 - [ ] **Global BPO Vendor Detection** — extend Step 16 vendor search to include international BPO names (Accenture BPO, WNS, Concentrix, Teleperformance, EXL, Sutherland, Conduent) in addition to India-focused vendors — displacement pitch angle and differentiation argument change materially for global incumbent vendors
 - [ ] **International News Coverage** — add Reuters, Bloomberg, FT, WSJ, TechCrunch, and local country-specific business press to Step 14 source table for non-India companies — ET/Mint/Business Standard do not cover global companies at depth
 - [ ] **Country-Specific ICP Score Calibration** — adjust ICP Score revenue band thresholds for non-India companies (sweet spot: $5M–$100M USD equivalent rather than ₹50–500 Cr) — prevents systematic ICP score errors when comparing USD/EUR revenue against INR-calibrated thresholds
+
+---
+
+## Phase 2 — BD Intelligence
+
+- [x] **ICP Scoring** — quantified Ideal Customer Profile score (1–100) combining company size, industry match, pain points, growth signals, and tech maturity; gives BD a ranked priority list *(shipped: Step 10B)*
+- [x] **Account Tiering** — classify as Tier 1 / 2 / 3 with explicit criteria so BD knows whether to assign a senior AE or an SDR *(shipped: Step 10B tier thresholds)*
+- [x] **Decision-Maker Dossiers** — for each BD-relevant director, a 3-line brief: background, LinkedIn activity pattern, likely objection *(shipped: Step 6B)*
+- [x] **Next Best Action** — a single ranked recommendation synthesizing all research into one concrete action (e.g., "Call the COO first — 3 open CX JDs on Naukri") *(shipped: Step 15E)*
+- [ ] **Deal Size Estimation** — estimate outsourcing contract value range based on headcount, revenue band, and service fit — helps BD prioritize pipeline and set realistic quota expectations before the first call
+- [ ] **BANT Pre-Qualification** — structured Budget / Authority / Need / Timeline scoring using research findings (revenue/funding for B, director mapping for A, pain points for N, growth events for T) — formats research output for direct CRM entry and pipeline qualification workflows
+- [ ] **Personalized Outreach Templates** — one email draft per top decision-maker using research findings as hooks (not generic copy) — removes the SDR copywriting step and increases open rates through specificity
+- [ ] **Competitive Positioning Brief** — if Step 16 detects an incumbent BPO vendor, generate a structured displacement argument: incumbent weakness → KServe advantage → proof point — converts vendor intelligence into a ready-to-use pitch narrative
+- [ ] **Expanded Objection Bank** — extend Step 15D from 2–3 objections to a full bank of 8–10 covering: cost, trust, data security, incumbent loyalty, cultural fit, past bad BPO experience, internal capacity belief, and timing — gives reps a full prep sheet, not just the top two
+- [ ] **Multi-Stakeholder Influence Map** — for companies with 3+ ★-flagged directors, map the reporting chain and decision-making influence relationships — knowing whether the CFO reports to the MD or operates independently changes which executive to open with
+- [ ] **Outreach Sequence Builder** — generate a 3-touch outreach sequence (email → LinkedIn → call) with specific research hooks for each touch — removes guesswork for SDRs running high-volume campaigns without losing personalization
+- [ ] **Win/Loss Signal Classification** — classify the prospect as Hot / Warm / Cold based on convergence of trigger signals (ICP score + active job postings + recent growth event) — distills the full research picture into a single traffic-light for BD triage
+- [ ] **LinkedIn Message Templates** — generate ready-to-use LinkedIn InMail drafts (≤300 characters) for each ★-flagged director, anchored to a specific research finding — high-personalization at scale without requiring the SDR to read the full report
+- [ ] **Cold Email Subject Line Generator** — output 3 subject line variants per prospect ranked by specificity (most specific: direct research finding; mid: industry + pain; generic: fallback) — subject line is the highest-leverage variable in cold email conversion
+- [ ] **Industry-Specific Pitch Angle** — map the company's primary industry (from Step 2) to KServe's strongest vertical proof points — a BFSI pitch (collections, compliance documentation) is structurally different from an eCommerce pitch (returns processing, customer care volume)
+- [ ] **Referral Angle Detector** — if Step 14 Key Partnerships includes any company KServe already serves, flag it and draft a referral-ask line — warm introductions via shared partners are the highest-conversion channel and currently go undetected
+- [ ] **Re-Engagement Trigger Brief** — for Tier 3 / Deprioritize prospects, define exactly what event should trigger re-engagement (next funding round, leadership change, review spike, new KServe-relevant job postings) — turns a dead lead into a monitored lead with explicit conditions
+- [ ] **Executive Relationship Score** — rate decision-maker accessibility as Easy / Moderate / Hard based on LinkedIn profile visibility, tenure at company, and recent post activity — helps SDRs prioritize outreach channel (InMail vs. phone vs. referral)
+- [ ] **Account Health Score (post-onboarding)** — design a refresh-mode metric that re-runs key signals (reviews, headcount, job postings) after KServe wins the account to detect churn risk — proactive retention intelligence, not just acquisition intelligence
+- [ ] **Competitive Urgency Signal** — if Step 17 shows a direct competitor is larger or better-funded and growing faster, flag it as a competitive urgency hook — "your competitor is scaling on outsourced ops; you're not" is a specific, time-sensitive trigger
+
+---
+
+## Phase 3 — Data Quality & Validation ✅ COMPLETE (shipped in v1.0.2 — 2026-03-09)
+
+- [x] **Per-Field Confidence Scoring** — replace single overall confidence level with per-field scores (e.g., `Turnover: HIGH [MCA-verified]`, `Headcount: LOW [LinkedIn estimate]`) *(shipped)*
+- [x] **Per-Field Freshness Timestamps** — each data point carries its source date, not just a report-level "data age" summary *(shipped)*
+- [x] **Source Diversity Enforcement** — Checker flags over-reliance on a single aggregator; require at least 2 independent sources for high-confidence fields *(shipped)*
+- [x] **Contradiction Detection Protocol** — explicit logic for revenue contradictions across sources, director mismatches, date inconsistencies *(shipped)*
+- [x] **BD Relevance Checker Criterion** — "Does this output answer: *why should KServe reach out NOW?*"; prevents technically complete but strategically empty sections from passing *(shipped)*
+- [x] **Anti-Hallucination Guardrail** — explicit instruction: if search returns zero results, Worker must state "No results found" — not infer from context *(shipped)*
+- [x] **Retry Budget Surface** — when a Worker exhausts its 2-retry limit, the Orchestrator must receive and flag that exhaustion explicitly in the final report *(shipped)*
+- [ ] **Confidence Decay Over Time** — flag data points older than 6 months as `Confidence: STALE` with a recommendation to re-verify — prevents stale ICP scores from driving outreach decisions months after the report was generated
+- [ ] **Cross-Step Contradiction Matrix** — automatically detect contradictions between steps (e.g., Step 3 revenue vs. Step 7B headcount implying an implausible revenue-per-employee ratio) — surfaces data integrity issues before the BD rep uses the report
+- [ ] **Field-Level Staleness Alerts** — attach a "data age" warning to individual fields (not just the footer) when the source date is >6 months old — makes staleness visible at the point of use, not buried in the footer
+- [ ] **Third-Party Data Freshness SLA** — define a maximum acceptable source age per field type (Director data: 30 days / Revenue: 12 months / Social followers: 7 days) — enables Checker to enforce recency consistently across all Workers
+- [ ] **Hallucination Detection: Revenue-per-Employee Plausibility Check** — flag Workers that report a revenue figure implying an implausible revenue-per-employee ratio (e.g., ₹10,000 Cr with 50 employees) — catches LLM interpolation errors before they reach the BD rep
+- [ ] **Source Archiving Instruction** — instruct Workers to note if a source URL returns a 404 or has materially changed since the report was run — enables source recovery and audit trail for compliance reviews
+- [ ] **Conflicting Source Resolution Log** — when sources conflict, require Worker to log all versions in a structured table (Source A vs. Source B vs. Authority winner with rationale) — makes resolution reasoning auditable and reproducible
+- [ ] **DATA QUALITY Scorecard Expansion** — extend the DATA QUALITY footer with: total sources cited, total unique domains, share of MCA-verified fields, and newest source date alongside oldest — gives a richer reliability picture at a glance
