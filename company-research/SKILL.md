@@ -1101,7 +1101,7 @@ When validating any Worker output, apply all eight criteria:
    *For Step 8 specifically:* Did the Worker produce all five sub-sections (A — Product Review, B — Service Review, C — Employee Review, D — General Company Review, E — Review Handling Methodology)? Sub-sections are not optional — if a sub-section has no data, it must say so explicitly (e.g., "No product reviews found"). Silent omissions → send back. Verbatim review excerpts (required in Section A's app sub-section only, except when `[Gated]` is documented; product reviews in A and all of B, C, and D use themes — not quotes) must be: in quotation marks, ≤40 words, attributed with date and source URL. Paraphrases dressed as quotes → send back. If the Worker has documented `[Gated]`, verbatim excerpts are not required — accept without retry.
 
 6. **Source diversity?** For high-stakes fields (Turnover, Directors, Head Office, Years in Existence), are there at least 2 *independent* sources? Two aggregators that both pull from MCA (e.g., Tofler + Zauba Corp) do not count as independent — MCA is the single source. If only one source exists, the field must be marked `Confidence: MED` or `LOW`, not `HIGH`. This isn't a blocker — it's a signal for the output.
-7. **BD relevance?** Does this output answer *"why should KServe reach out to this company now?"* — not just what is factually true, but what is strategically actionable. A section that lists accurate data with no BD framing should be sent back: *"Add a BD insight — what does this data signal for KServe's outreach opportunity?"* This criterion applies most strictly to Steps 8, 10, 12, 14, and 15.
+7. **BD relevance?** Does this output answer *"why should KServe reach out to this company now?"* — not just what is factually true, but what is strategically actionable. A section that lists accurate data with no BD framing should be sent back: *"Add a BD insight — what does this data signal for KServe's outreach opportunity?"* This criterion applies most strictly to Steps 8, 10, 12, 14, 15, 16, and 17.
 
    *For Step 8E specifically:* The BD signal field must be an implication, not a description. "They respond to reviews" is not BD insight. Acceptable example: "Review responses are boilerplate and slow (>7 days) — signals understaffed or unstructured CS; KServe's Customer Service offering directly addresses this." If the BD signal reads as description only → send back. Response rate estimates must always reference a sample count (e.g., "based on 12 reviews examined") — not conditional on volume. "None detected" is always valid if platforms were checked. Section 8E defaults to Confidence: MED (methodology is inferred, not stated) unless a job posting or news article explicitly names a tool or process.
 
@@ -1139,7 +1139,7 @@ The Sanitizer runs once as a Wave 1.5 gate before Wave 2 spawns.
 - **PARALLEL mode:** after all Wave 1 Workers are Checker-approved, before spawning Workers 10 and 10B
 - **SEQUENTIAL mode:** after Step 9 is approved, before Step 10 begins (covers Steps 2–9)
 
-**What to scan:** All approved Wave 1 outputs. Note: Step 9's output is a synthesized artifact (scored summary of Step 8 data), not raw third-party content — the scan applies equally but may find lower injection surface.
+**What to scan:** All approved Wave 1 outputs (Steps 2–9, 11–14, 16–17 — 17 steps total). Note: Step 9's output is a synthesized artifact (scored summary of Step 8 data), not raw third-party content — the scan applies equally but may find lower injection surface.
 
 **Instructions:**
 
@@ -1161,7 +1161,7 @@ The Sanitizer runs once as a Wave 1.5 gate before Wave 2 spawns.
 
 ## Orchestrator Instructions
 
-After all 19 Workers complete and each Checker has approved:
+After all 19 Workers complete and each Checker has approved (19 = 17 Wave 1 Workers [Steps 2–9, 11–14, 16–17] + 2 Wave 2 Workers [Steps 10 + 10B]):
 
 1. Assemble all approved sections into the Output Format template in order
 2. **Before assembling Steps 10 & 10B (KServe Fit + ICP Score):** verify that the Sanitizer gate has completed and that approved **sanitized** outputs from ALL of Steps 2–9 are present. If any Wave 1 step is still pending or the Sanitizer has not run, wait. If a Step 10 or 10B Worker ran before the Sanitizer completed, discard that output and re-request with the full sanitized Wave 1 context.
