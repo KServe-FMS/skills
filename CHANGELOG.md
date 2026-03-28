@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.1] — 2026-03-27
+
+### Fixed — Skill Standards & Quality (Phase 7 audit)
+
+- **YAML trigger description** — rewritten to lead with trigger signal using pushy, sales-rep-natural language; no longer buries triggering phrases as examples at the end
+- **Step 1 explicit numbering** — `## Research Steps` header updated to `(Steps 1–17)`; `### Step 1 — Company Verification` heading added before Step 2 with pointer to Research Flow
+- **Step 6B Source Priority table** — Fallback column now lists actual fallback sources (`Conference speaking history · Industry press mentions`) instead of an instruction
+- **Step 10B dependency declaration** — corrected from `Steps 2–10` to `Steps 2–14`; ICP dimensions draw from Steps 10, 12, and 14
+- **Checker Criterion #7 scope** — BD relevance enforcement extended to Steps 16 and 17 (previously only 8, 10, 12, 14, 15)
+- **Step 15 circular reference** — "synthesize from Steps 2–17" corrected to "synthesize from Steps 2–14, 16, and 17"
+- **Wave 2 read-scope** — architecture diagram and prose now show per-worker scope: Worker 10 reads Steps 2–9; Worker 10B reads Steps 2–9, 11–14, 16–17
+- **Orchestrator worker count** — "19 Workers" annotated with breakdown: `19 = 17 Wave 1 + 2 Wave 2`
+- **Sanitizer scope** — "All approved Wave 1 outputs" now explicitly lists `(Steps 2–9, 11–14, 16–17 — 17 steps total)`
+- **Platform Execution Mode table** — SEQUENTIAL row now includes Claude Desktop (MCP), Cursor, VS Code Agent, Cline, Continue.dev, Windsurf
+- **Tool Absence Degradation Protocol** — new Core Research Principle: halt before starting if a required tool class (web search / file write / subagents) is entirely absent from the environment
+- **Compatibility statement** — added Claude Desktop (MCP), Cursor, VS Code Agent
+
+### Docs
+- Added spec: `docs/superpowers/specs/2026-03-27-phase7-skill-standards-design.md`
+- Added plan: `docs/superpowers/plans/2026-03-27-phase7-skill-standards.md`
+
+---
+
 ## [1.4.0] — 2026-03-17
 
 ### Security — Prompt Injection Defense (issue #6)
