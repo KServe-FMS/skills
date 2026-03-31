@@ -123,6 +123,21 @@ Please confirm and I'll run the full research.
 
 ### Phase 2 — Full Research (after user confirms)
 
+**Duplicate run detection.** Before spawning any Workers, check if a research report for this company was already produced in the current session:
+
+- If a report exists and is **less than 24 hours old**: notify the user before re-running:
+  ```
+  ℹ️ A report for [Company Name] was already produced in this session ([time] ago).
+  Use existing report or run fresh research?
+  ```
+  On **Use existing**: present the prior report. On **Run fresh**: proceed normally and replace the prior output.
+
+- If a report exists but is **24 hours or older**: run fresh automatically. Note at the top of the new report: `⚠️ Previous report from [date] superseded.`
+
+- If no prior report exists: proceed normally.
+
+If the platform does not persist session history, skip this check and always run fresh.
+
 Run all 16 research steps (Steps 2–17) using the execution mode detected above. Each step follows the **Worker → Checker → Orchestrator** pattern:
 
 1. **Worker** gathers data for that step using available web/search tools
