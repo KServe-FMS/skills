@@ -1127,6 +1127,20 @@ User confirms company (Step 1)
 
 ## Checker Instructions
 
+**Schema gate (run before the 8 criteria).** Before evaluating any criterion, verify the Worker output has the minimum required structure:
+
+| Required field | What to check |
+|---|---|
+| Data content | At least one data finding is present (not blank, not "TBD") |
+| Source citation | At least one URL or document reference is present |
+| Confidence label | A `HIGH / MED / LOW` label is present with a source justification |
+| Step identifier | Output is clearly attributed to a specific step number |
+
+If any required field is absent: return immediately to Worker with:
+`Schema invalid — missing: [field name(s)]. Resubmit with all required fields present.`
+
+Schema rejections do **not** count against the 2-retry budget. The retry budget applies only after schema passes.
+
 When validating any Worker output, apply all eight criteria:
 
 1. **Source present?** Every fact must have a URL or named document. No source → send back.
