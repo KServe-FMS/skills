@@ -2,7 +2,7 @@
 
 This is the enterprise master document for the `company-research` skill. It is the single source of truth for all shipped features and forward-looking improvements.
 
-**Current skill version:** v1.5.0
+**Current skill version:** v1.5.1
 **How to read this doc:** `[x]` = shipped · `[ ]` = roadmap · items are grouped by theme and roughly ordered by impact within each group · shipped items include `*(shipped: ...)` notes for traceability
 
 ---

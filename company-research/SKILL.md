@@ -58,7 +58,7 @@ If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 **Auto-upgrade detection.** Before starting any research run, test whether subagent tools (`Task`, `spawn_agent`, or platform equivalent) are available. If they are available and SEQUENTIAL was assumed or defaulted to, offer the user a choice before proceeding:
 
 ```
-⚡ Parallel mode available. I can run all 17 research steps simultaneously (~3× faster).
+⚡ Parallel mode available. I can run 19 research workers across 3 waves (~3× faster).
 Continue in SEQUENTIAL (current), or switch to PARALLEL?
 ```
 
@@ -212,7 +212,7 @@ Use this table for every step. Each step lists which sources to try in order of 
 | 7C — Tech Stack | BuiltWith · Wappalyzer | Job posting tech mentions | Company website footer vendor tags |
 | 8 — Reviews | Google Business · Trustpilot · AmbitionBox · Glassdoor | Amazon · Flipkart · App Store · Google Play · Justdial | AppFollow · AppBot (app reviews) · job postings (Step 8E tool detection only) |
 | 9 — Rating | Synthesized from Step 8 output | — | If Step 8 produced < 15 total reviews across all platforms, mark rating Confidence: LOW and note sample size. If zero reviews, write "Rating: N/A". |
-| 10 — KServe Fit | Synthesized from Steps 2–9 output (Wave 2 and Sanitizer must be fully complete) | — | If Step 10 is RETRY_EXHAUSTED, Step 15 must omit Section C (Trigger Signals). |
+| 10 — KServe Fit | Synthesized from Steps 2–9 output (Wave 3 worker — requires Sanitizer gate complete) | — | If Step 10 is RETRY_EXHAUSTED, Step 15 must omit Section C (Trigger Signals). |
 | 10B — ICP Score | Synthesized from Steps 2–10 output — no new searches | — | If Step 7B was not run, assign 3/10 for job postings dimension with note "Step 7B not run". |
 | 11 — Customer Care | Company website | Google Business · Justdial | App Store / Play Store listing |
 | 12 — Social Media | Direct platform search (LinkedIn, Instagram, Facebook, X, YouTube) | Social Blade (trends) | Company website social links |
