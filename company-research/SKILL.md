@@ -55,26 +55,38 @@ Detect your execution mode before starting. Apply it consistently throughout.
 
 If unsure, default to **SEQUENTIAL** — it is always safe, just slower.
 
-**PARALLEL:** Spawn in two waves after user confirms.
+**Auto-upgrade detection.** Before starting any research run, test whether subagent tools (`Task`, `spawn_agent`, or platform equivalent) are available. If they are available and SEQUENTIAL was assumed or defaulted to, offer the user a choice before proceeding:
 
-**Wave 1 — spawn simultaneously:** Workers 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14, 16, 17. Each Worker runs its own Checker loop independently.
+```
+⚡ Parallel mode available. I can run all 17 research steps simultaneously (~3× faster).
+Continue in SEQUENTIAL (current), or switch to PARALLEL?
+```
 
-**Wave 1.5 — Sanitizer gate (run after ALL Wave 1 workers are Checker-approved):** Before spawning Wave 2, run the Sanitizer across all approved Wave 1 outputs. See Sanitizer Instructions. Pass sanitized outputs to the Orchestrator.
+Wait for confirmation. Never auto-switch without user confirmation. If the user doesn't respond or declines, continue in SEQUENTIAL.
 
-**Wave 2 — spawn only after the Sanitizer gate is complete:** Workers 10 (KServe Fit) and 10B (ICP Score). Worker 10 reads the **sanitized** approved outputs from Steps 2–9. Worker 10B reads sanitized Steps 2–9, 11–14, and 16–17. Do not spawn Workers 10 or 10B until the Sanitizer has completed.
+**PARALLEL:** Spawn in three waves after user confirms.
 
-Orchestrator assembles the final report once Workers 10, 10B, and all Wave 1 workers are complete.
+**Wave 1 — spawn simultaneously (15 independent workers):** Steps 2, 3, 4, 5, 6, 7, 7B, 7C, 8, 11, 12, 13, 14, 16, 17. Each Worker runs its own Checker loop independently.
+
+**Wave 2 — spawn after Wave 1 fully Checker-approved (2 dependent workers):** Steps 6B (Decision-Maker Dossiers) and 9 (Rating). Step 6B depends on the ★-flagged director list from Step 6. Step 9 depends on the review data from Step 8. Spawn both simultaneously once Wave 1 is complete.
+
+**Sanitizer gate — run after Wave 2 is fully Checker-approved:** Scan all approved Wave 1 + Wave 2 outputs (17 steps total). See Sanitizer Instructions. Pass sanitized outputs to the Orchestrator.
+
+**Wave 3 — spawn only after the Sanitizer gate is complete (2 synthesis workers):** Steps 10 (KServe Fit) and 10B (ICP Score). Step 10 reads the **sanitized** approved outputs from Steps 2–9. Step 10B reads sanitized Steps 2–9, 11–14, and 16–17. Do not spawn Steps 10 or 10B until the Sanitizer has completed.
+
+Orchestrator assembles the final report once all 19 Workers are complete (15 Wave 1 + 2 Wave 2 + 2 Wave 3).
 
 **PARALLEL — Progress reporting:** After spawning Wave 1, immediately post a status board to the user:
 ```
-Research started for [Company Name]. Running 17 parallel workers:
-⏳ In progress: Steps 2, 3, 4, 5, 6, 6B, 7, 7B, 7C, 8, 9, 11, 12, 13, 14, 16, 17
-⏸️  Waiting to spawn: Steps 10 & 10B (KServe Fit + ICP Score — start after Wave 1 completes)
+Research started for [Company Name]. Running 15 parallel Wave 1 workers:
+⏳ In progress: Steps 2, 3, 4, 5, 6, 7, 7B, 7C, 8, 11, 12, 13, 14, 16, 17
+⏸️  Waiting for Wave 1: Steps 6B, 9 (spawn after Wave 1 complete)
+⏸️  Waiting for Sanitizer: Steps 10 & 10B (KServe Fit + ICP Score)
 I'll update you as sections complete.
 ```
 As each Worker is approved by its Checker, post a one-line update: `✓ [Step name] complete — [1-phrase summary, e.g., "Turnover: ₹847 Cr FY24"]`
 
-When Wave 1 is fully complete: `Wave 1 complete. Running Sanitizer gate…` Then after Sanitizer completes: `Sanitizer complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
+When Wave 1 is fully complete: `Wave 1 complete. Spawning Wave 2 (Steps 6B and 9)…` When Wave 2 is fully complete: `Wave 2 complete. Running Sanitizer gate…` Then after Sanitizer completes: `Sanitizer complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
 
 **SEQUENTIAL:** Run Steps 2–17 in order. Complete each Worker → Checker loop before advancing. After each step is approved, **immediately append the completed section to the output** with prefix `✓ [Step name] complete:` — do not buffer until Step 17. Exception: Step 10 (KServe Fit) cannot stream early — it depends on Steps 2–9 all being approved first. **After Step 9 is approved and before Step 10 begins:** run the Sanitizer gate across Steps 2–9 outputs (see Sanitizer Instructions). Post: `Sanitizer complete. Proceeding to Step 10…` In SEQUENTIAL mode this is the only Sanitizer pass; Steps 11–17 are defended by the Layer 1 preambles, Checker criterion #8, and the Step 15 injection guard. After Step 17, append the BD Briefing and DATA QUALITY footer to complete the report.
 
