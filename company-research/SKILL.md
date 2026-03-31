@@ -1063,32 +1063,39 @@ User confirms company (Step 1)
          │
          ▼ POST PROGRESS STATUS BOARD
 ┌─────────────────────────────────────────────────────┐
-│    WAVE 1 — SPAWN SIMULTANEOUSLY                    │
-│  Workers: 2, 3, 4, 5, 6, 6B, 7, 7B, 7C             │
-│           8, 9*, 11, 12, 13, 14, 16, 17             │
-│  (*Step 9 waits for Step 8 internally)              │
+│    WAVE 1 — SPAWN SIMULTANEOUSLY (15 workers)       │
+│  Workers: 2, 3, 4, 5, 6, 7, 7B, 7C, 8              │
+│           11, 12, 13, 14, 16, 17                    │
 │  Post ✓ update after each worker approved           │
 └─────────────────────────────────────────────────────┘
-         │ (each worker ↔ checker loop — 8 criteria)
-         ▼ POST "Wave 1 complete. Running Sanitizer gate…"
+         │ (each worker ↔ checker loop — schema gate + 8 criteria)
+         ▼ POST "Wave 1 complete. Spawning Wave 2…"
 ┌─────────────────────────────────────────────────────┐
-│    WAVE 1.5 — SANITIZER GATE                        │
-│  Scans all approved Wave 1 outputs                  │
+│    WAVE 2 — SPAWN AFTER WAVE 1 COMPLETE (2 workers) │
+│  Worker 6B: Decision-Maker Dossiers (needs Step 6)  │
+│  Worker 9:  Rating (needs Step 8)                   │
+└─────────────────────────────────────────────────────┘
+         │ (Wave 2 ↔ checker loop)
+         ▼ POST "Wave 2 complete. Running Sanitizer gate…"
+┌─────────────────────────────────────────────────────┐
+│    SANITIZER GATE                                   │
+│  Scans all approved Wave 1 + Wave 2 outputs         │
+│  (17 steps total)                                   │
 │  Strips injection patterns                          │
 │  Logs Security events in DATA QUALITY footer        │
 └─────────────────────────────────────────────────────┘
          ▼ POST "Sanitizer complete. Spawning Steps 10 & 10B…"
 ┌─────────────────────────────────────────────────────┐
-│    WAVE 2 — SPAWN AFTER SANITIZER COMPLETE          │
+│    WAVE 3 — SPAWN AFTER SANITIZER COMPLETE          │
 │  Workers: 10 (KServe Fit), 10B (ICP Score)          │
 │  Worker 10:  sanitized Steps 2–9                    │
 │  Worker 10B: sanitized Steps 2–9, 11–14, 16–17      │
 └─────────────────────────────────────────────────────┘
-         │ (Wave 2 ↔ checker loop)
+         │ (Wave 3 ↔ checker loop)
          ▼
 ┌─────────────────────────────────────────────────────┐
 │         ORCHESTRATOR                                │
-│  Verify Steps 10 & 10B ran after Sanitizer complete │
+│  Run completeness health check (5-point checklist)  │
 │  Assemble all approved sections in order            │
 │  Validate completeness · Tally confidence           │
 │  Collect RETRY_EXHAUSTED signals → Data gaps        │
