@@ -2,7 +2,7 @@
 
 This is the enterprise master document for the `company-research` skill. It is the single source of truth for all shipped features and forward-looking improvements.
 
-**Current skill version:** v1.4.0
+**Current skill version:** v1.5.0
 **How to read this doc:** `[x]` = shipped · `[ ]` = roadmap · items are grouped by theme and roughly ordered by impact within each group · shipped items include `*(shipped: ...)` notes for traceability
 
 ---
@@ -91,21 +91,21 @@ This is the enterprise master document for the `company-research` skill. It is t
 
 ---
 
-## Phase 4 — Workflow & Architecture
+## Phase 4 — Workflow & Architecture ✅ COMPLETE (shipped in v1.5.0 — 2026-03-31)
 
 - [x] **Streaming Partial Delivery** — in SEQUENTIAL mode, present each completed section immediately rather than buffering until all steps finish *(shipped: Enhancement 2.8)*
 - [x] **Formal Dependency Graph** — declare a DAG for PARALLEL mode; explicit two-wave spawning enforces Step 10/10B dependency *(shipped: Fix 1.2 + Orchestrator validation step)*
 - [x] **Live Progress Reporting** — in PARALLEL mode, a status board after Wave 1 spawn; per-step ✓ updates as Workers complete *(shipped: Enhancement 2.7)*
 - [x] **Rate Limit Awareness** — detect 429/throttle responses from Tracxn and LinkedIn; switch sources immediately rather than retrying the same endpoint *(shipped: Enhancement 2.6)*
 - [x] **Graceful Partial Report** — if 4+ steps fail, Step 15 opens with a partial-data warning header *(shipped: Fix 1.4)*
-- [ ] **Tool Availability Detection** — if a primary search tool is unavailable (not rate-limited, but absent entirely), explicitly try the secondary, then note the gap — prevents silent failures that produce incomplete reports without flagging the cause
-- [ ] **Partial-Run Resume Protocol** — if a PARALLEL run is interrupted mid-wave, define a resume protocol: completed Workers' outputs are cached and re-used; only incomplete Workers re-run — prevents full re-research on interruption
-- [ ] **SEQUENTIAL → PARALLEL Auto-Upgrade Detection** — at runtime, detect if the executing platform has gained subagent capability since SEQUENTIAL was assumed; offer to re-run in PARALLEL for speed — prevents users from running slow sequential mode on platforms that support parallelism
-- [ ] **Source Failover Chain Automation** — if a Worker's primary source returns 429/access-denied, automatically advance to the next source in the Step's Source Priority table without returning to user — currently documented as a principle but not mechanically enforced
-- [ ] **Worker Output Schema Validation** — after each Worker completes, validate output against a per-step schema (required fields present, source cited, confidence label present) — prevents malformed Worker output from reaching the Checker and causing downstream errors
-- [ ] **Dependency-Aware Wave Scheduling** — extend the Wave 1 / Wave 2 model to support finer-grained internal dependencies (Step 9 must wait for Step 8; Step 6B must wait for Step 6; Step 10B must wait for Step 10) — currently these are implicit; making them explicit prevents race conditions in PARALLEL mode
-- [ ] **Idempotent Re-Run Support** — define behavior when the same company is researched twice in the same session; deduplicate outputs and flag if cached data is <24 hours old — prevents duplicate API consumption and conflicting report versions
-- [ ] **Orchestrator Completeness Health Check** — before assembling the final report, Orchestrator runs a structured completeness checklist: all 16 research steps present, Wave 2 ran post-Sanitizer, no steps in pending state, all RETRY_EXHAUSTED signals collected — currently partially specified; formalizing prevents silent omissions in edge cases
+- [x] **Tool Availability Detection** — if a primary search tool is unavailable (not rate-limited, but absent entirely), explicitly try the secondary, then note the gap — prevents silent failures that produce incomplete reports without flagging the cause *(shipped: Phase 4 — 2026-03-31)*
+- [x] **Partial-Run Resume Protocol** — if a PARALLEL run is interrupted mid-wave, define a resume protocol: completed Workers' outputs are cached and re-used; only incomplete Workers re-run — prevents full re-research on interruption *(shipped: Phase 4 — 2026-03-31)*
+- [x] **SEQUENTIAL → PARALLEL Auto-Upgrade Detection** — at runtime, detect if the executing platform has gained subagent capability since SEQUENTIAL was assumed; offer to re-run in PARALLEL for speed — prevents users from running slow sequential mode on platforms that support parallelism *(shipped: Phase 4 — 2026-03-31)*
+- [x] **Source Failover Chain Automation** — if a Worker's primary source returns 429/access-denied, automatically advance to the next source in the Step's Source Priority table without returning to user — currently documented as a principle but not mechanically enforced *(shipped: Phase 4 — 2026-03-31)*
+- [x] **Worker Output Schema Validation** — after each Worker completes, validate output against a per-step schema (required fields present, source cited, confidence label present) — prevents malformed Worker output from reaching the Checker and causing downstream errors *(shipped: Phase 4 — 2026-03-31)*
+- [x] **Dependency-Aware Wave Scheduling** — extend the Wave 1 / Wave 2 model to support finer-grained internal dependencies (Step 9 must wait for Step 8; Step 6B must wait for Step 6; Step 10B must wait for Step 10) — currently these are implicit; making them explicit prevents race conditions in PARALLEL mode *(shipped: Phase 4 — 2026-03-31)*
+- [x] **Idempotent Re-Run Support** — define behavior when the same company is researched twice in the same session; deduplicate outputs and flag if cached data is <24 hours old — prevents duplicate API consumption and conflicting report versions *(shipped: Phase 4 — 2026-03-31)*
+- [x] **Orchestrator Completeness Health Check** — before assembling the final report, Orchestrator runs a structured completeness checklist: all 16 research steps present, Wave 2 ran post-Sanitizer, no steps in pending state, all RETRY_EXHAUSTED signals collected — currently partially specified; formalizing prevents silent omissions in edge cases *(shipped: Phase 4 — 2026-03-31)*
 
 ---
 
