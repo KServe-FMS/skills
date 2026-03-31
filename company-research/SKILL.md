@@ -141,17 +141,21 @@ Tofler, Zauba Corp, and similar aggregators pull from MCA and are acceptable sec
 
 **Graceful degradation.** If a tool or data source is unavailable, note it clearly in that section and move on. Never halt the entire report because one step hit a wall.
 
+**Tool availability detection.** If a primary source for a step is unreachable — distinct from rate-limited or access-denied — explicitly try the secondary source from the Source Priority table before noting the gap. Only after the secondary also fails should the step note "Not publicly available."
+
 **Tool class unavailable.** If a required tool class is entirely absent from the executing environment — not rate-limited or gated, but simply not available — halt before starting and notify the user:
 
 > ⚠️ Required tool class: [name the missing class — web search / file write / subagents]. This skill cannot produce a reliable report without it. Please check your platform configuration or switch to a supported environment (see Platform Execution Mode table above).
 
 Do not attempt to proceed in a partially capable environment. An incomplete report handed to BD is actively harmful.
 
-**Rate-limited or gated sources.** If a source returns a 429, access-denied, or login-required response:
+**Source failover chain.** Workers must traverse the Source Priority table mechanically — Primary → Secondary → Fallback — without returning to the user between attempts. Each failed attempt (whether unreachable, rate-limited, or access-denied) is noted in the report. Only after all three tiers fail does the step emit `RETRY_EXHAUSTED`.
+
+For each failed source:
 1. Do not retry the same source more than once immediately.
-2. Switch to the next source in the Source Priority table for that step.
-3. Note in the report: `⚠️ [Source name] access denied/rate-limited — [fallback source] used instead.`
-4. If ALL sources for a step are gated: flag the step as `RETRY_EXHAUSTED` with reason "all sources gated" and move on without loop-retrying.
+2. Advance to the next source in the Source Priority table.
+3. Note in the report: `⚠️ [Source name] unavailable/rate-limited — [next source] used instead.`
+4. If ALL sources for a step are exhausted: flag the step as `RETRY_EXHAUSTED` with reason "all sources exhausted" and move on.
 
 Commonly gated sources — handle proactively:
 - **Tracxn:** Check the public company URL first (often accessible); only flag gated if you hit a login wall on the detail page.
