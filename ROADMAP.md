@@ -26,9 +26,9 @@ This is the enterprise master document for the `company-research` skill. It is t
 - [x] **Step 8 — Reviews** — add sentiment trend over time (improving or worsening?), not just themes; a worsening trend is a stronger trigger signal *(shipped: Enhancement 2.3)*
 - [x] **Step 13 — Tracxn** — add Crunchbase employee count, funding timeline, and investor tier classification; currently too shallow *(shipped: Enhancement 2.4)*
 - [x] **Step 14 — M&A** — extend to government contracts/tenders (GEM portal) and PE ownership structure *(shipped: Enhancement 2.5)*
-- [ ] **Step 6 — Board Composition Signal** — classify board as Founder-dominated / Institutional / Mixed and note implications for decision-making speed — founder-dominated boards close faster; institutional boards require multi-stakeholder buy-in
-- [ ] **Step 3 — Turnover Trend (3-Year)** — pull 3 consecutive years of MCA revenue filings instead of just the latest — a declining revenue trend changes the pitch from growth-support to cost-reduction
-- [ ] **Step 7B — Attrition Signal from JDs** — flag JDs that mention "replacement hire," "immediate joiners," or "notice period buyout" as high-attrition signals — high attrition in a function KServe serves is a direct outsourcing trigger
+- [x] **Step 6 — Board Composition Signal** — classify board as Founder-dominated / Institutional / Mixed and note implications for decision-making speed — founder-dominated boards close faster; institutional boards require multi-stakeholder buy-in *(shipped: Phase 1 depth improvements)*
+- [x] **Step 3 — Turnover Trend (3-Year)** — mandatory latest FY + 2 prior years (dynamic, not hardcoded) with trend classification (Growing/Declining/Mixed/Insufficient data) and BD framing — a declining revenue trend changes the pitch from growth-support to cost-reduction *(shipped: Phase 1 depth improvements)*
+- [x] **Step 7B — Attrition Signal from JDs** — flag JDs that mention "replacement hire," "immediate joiners," "notice period buyout," "backfill" as high-attrition signals — high attrition in a function KServe serves is a direct outsourcing trigger *(shipped: Phase 1 depth improvements)*
 - [ ] **GeM Supplier Profile Depth** — extend Step 14 GeM check with bid history, active tenders, and awarded contract values — government contract volume signals compliance maturity and procurement cycle length, both of which shape the KServe pitch approach
 
 ### India-Primary Additions
