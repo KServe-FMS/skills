@@ -168,4 +168,4 @@ Attrition signal: [High — [function] JDs show replacement/immediate-joiner lan
 - [x] **Task 3A:** Extend Step 7B instruction — attrition keywords + Find bullet + BD framing rule
 - [x] **Task 3B:** Update Step 7B output format block (`💼 JOB POSTINGS & WORKFORCE SIGNALS`)
 - [x] **Task 3C:** Verify Step 7B changes and commit
-- [ ] **Task 4:** Mark 3 ROADMAP.md items `[x]` and commit
+- [x] **Task 4:** Mark 3 ROADMAP.md items `[x]` and commit
