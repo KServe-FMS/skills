@@ -300,6 +300,22 @@ If LinkedIn is not accessible for a director: write `LinkedIn: Not publicly acce
 `★ [Name] — [Designation] — DIN: [XXXXXXXX] — LinkedIn: [URL or "Not accessible"] — Tenure: [X years / ★ NEW (<6 months)]`
 `[Name] — [Designation] — DIN: [XXXXXXXX]` (for non-BD-relevant directors, no LinkedIn lookup needed)
 
+**Board Composition Signal:**
+Using the director list from MCA, classify the board as one of:
+- `Founder-dominated` — MD/CEO/Promoter-Director(s) hold the majority of board seats AND are also promoters/shareholders
+- `Institutional` — majority of seats held by Independent Directors or PE/VC-nominated directors; founder(s) hold minority or no seats
+- `Mixed` — roughly equal split between founder and independent/institutional directors, or both founder and PE/institutional voice are clearly present
+
+**Classification rules:**
+- Designation signals → founder side: "Managing Director", "Promoter Director", "Director (Promoter)", "Whole-time Director"
+- Designation signals → institutional side: "Independent Director", "Nominee Director", "Non-Executive Director"
+- If designation data is ambiguous or unavailable from MCA: write `Board classification: Insufficient data — designations not available`
+
+**BD framing:**
+- Founder-dominated → single decision-maker or small inner circle; deal can close faster; pitch to the MD directly
+- Institutional → multi-stakeholder buy-in required; expect a longer evaluation cycle; lead with ROI data and case studies in first contact
+- Mixed → adapt per the strongest voice identified in Step 6B dossiers
+
 ---
 
 ### Step 6B — Decision-Maker Dossiers
@@ -891,6 +907,8 @@ Source(s): [URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 👔 DIRECTORS
 ★ [Name] — [Designation] — DIN: [XXXXXXXX] — LinkedIn: [URL or "Not accessible"] — Tenure: [X years / ★ NEW (<6 months)]
 [Name] — [Designation] — DIN: [XXXXXXXX]
+Board Classification: Founder-dominated / Institutional / Mixed / Insufficient data
+BD signal: [decision-making speed implication and recommended pitch approach]
 Source(s): [MCA URL] | Confidence: HIGH/MED/LOW | Source date: YYYY-MM-DD
 
 🧑‍💼 DECISION-MAKER DOSSIERS
