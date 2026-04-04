@@ -357,11 +357,14 @@ Search for active job postings to reveal what functions the company is actively 
 - Approximate number of open roles (not exact — a range is fine, e.g., "15–20 open roles")
 - Top 3 functions with the most open roles (e.g., "Customer Support: 12, Back-Office: 5, Collections: 4")
 - Keywords in JDs that signal outsourcing pain: "manage high volume," "handle escalations," "coordinate with outsourcing vendor," "work with BPO partner," "process-driven," "high-throughput"
+- Attrition signals in JDs — flag separately from outsourcing pain: "replacement hire," "immediate joiners," "notice period buyout," "backfill," "high-volume hiring" (for the same role type repeatedly posted), "we are continuously hiring"
 - Roles that directly match KServe's services: Customer Service agents, Collections executives, Lead Generation reps, Data Entry / Back-Office Processing staff, Market Research analysts
+- Attrition signal: are any open roles in functions KServe serves phrased as replacement hires or immediate-joiner urgency? If yes, flag the function and the keyword found.
 
 **BD framing:** List 2–3 open roles most directly relevant to KServe's services:
 Format: `[Role title] — [KServe service match] — [approximate count or "multiple"]`
 Then: 1-sentence BD signal — what does this hiring pattern imply about the company's current resourcing pressure?
+- High attrition in a KServe-relevant function (flagged by replacement / immediate-joiner language) → strongest outsourcing trigger: the company is losing productivity every hiring cycle; outsourcing removes the attrition cost entirely. Lead with: "We've helped companies in [industry] eliminate recurring backfill cost in [function] by transitioning to a managed-ops model."
 
 **If no public job postings found:** Write `No active job postings found on Naukri, LinkedIn Jobs, or Indeed India as of [date]. Company may not be publicly recruiting, or postings may be behind a login wall.`
 
@@ -932,6 +935,7 @@ LinkedIn Headcount: ~X employees [as of YYYY-MM-DD]
 Trend: Growing / Stable / Shrinking / Insufficient data
 Basis: [e.g., "+18% per LinkedIn over 2 years; corroborated by 23 open roles on Naukri"]
 Headcount signal: [scaling pain → outsourcing appetite / freeze → cost-conscious pitch, lead with ROI]
+Attrition signal: [High — [function] JDs show replacement/immediate-joiner language / None detected / Insufficient data]
 Source(s): [URLs] | Confidence: HIGH/MED/LOW | Checked: YYYY-MM-DD
 
 🛠️ TECHNOLOGY STACK
