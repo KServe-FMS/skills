@@ -159,9 +159,9 @@ Attrition signal: [High — [function] JDs show replacement/immediate-joiner lan
 
 ## Task List
 
-- [ ] **Task 1A:** Extend Step 3 instruction — mandatory latest year + 2 prior years for trend + trend classification + BD framing
-- [ ] **Task 1B:** Update Step 3 output format block (`💰 TURNOVER`)
-- [ ] **Task 1C:** Verify Step 3 changes and commit
+- [x] **Task 1A:** Extend Step 3 instruction — mandatory latest year + 2 prior years for trend + trend classification + BD framing
+- [x] **Task 1B:** Update Step 3 output format block (`💰 TURNOVER`)
+- [x] **Task 1C:** Verify Step 3 changes and commit
 - [ ] **Task 2A:** Add Board Composition Signal sub-section to Step 6 instruction
 - [ ] **Task 2B:** Update Step 6 output format block (`👔 DIRECTORS`)
 - [ ] **Task 2C:** Verify Step 6 changes and commit
