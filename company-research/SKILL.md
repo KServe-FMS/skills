@@ -84,7 +84,7 @@ Research started for [Company Name]. Running 15 parallel Wave 1 workers:
 ⏸️  Waiting for Sanitizer: Steps 10 & 10B (KServe Fit + ICP Score)
 I'll update you as sections complete.
 ```
-As each Worker is approved by its Checker, post a one-line update: `✓ [Step name] complete — [1-phrase summary, e.g., "Turnover: ₹847 Cr FY24"]`
+As each Worker is approved by its Checker, post a one-line update: `✓ [Step name] complete — [1-phrase summary, e.g., "Turnover: ₹847 Cr FY25, Growing (3yr)"]`
 
 When Wave 1 is fully complete: `Wave 1 complete. Spawning Wave 2 (Steps 6B and 9)…` When Wave 2 is fully complete: `Wave 2 complete. Running Sanitizer gate…` Then after Sanitizer completes: `Sanitizer complete. Spawning KServe Fit (Step 10) and ICP Score (Step 10B). Assembling final report…`
 
@@ -254,7 +254,7 @@ If the latest year is unavailable: write "Private company — turnover not publi
 **Trend classification (requires at least 2 years of data):**
 - `Growing` — revenue higher each year than the prior year
 - `Declining` — revenue lower each year than the prior year
-- `Mixed` — revenue fluctuated across years
+- `Mixed` — revenue fluctuated across years (requires all 3 years present; cannot be assigned with only 2 years)
 - `Insufficient data` — only 1 year available; trend cannot be determined
 
 **BD framing:**
@@ -307,9 +307,10 @@ Using the director list from MCA, classify the board as one of:
 - `Mixed` — roughly equal split between founder and independent/institutional directors, or both founder and PE/institutional voice are clearly present
 
 **Classification rules:**
-- Designation signals → founder side: "Managing Director", "Promoter Director", "Director (Promoter)", "Whole-time Director"
-- Designation signals → institutional side: "Independent Director", "Nominee Director", "Non-Executive Director"
-- If designation data is ambiguous or unavailable from MCA: write `Board classification: Insufficient data — designations not available`
+- Designation signals → founder side: "Managing Director", "Chief Executive Officer", "Promoter Director", "Director (Promoter)", "Whole-time Director"
+- Designation signals → institutional side: "Independent Director", "Nominee Director"
+- Designation signals → ambiguous: "Non-Executive Director" — verify if they are also listed as a promoter; if yes, treat as founder side; if not, treat as institutional
+- If designation data is ambiguous or unavailable from MCA: write `Board Classification: Insufficient data — designations not available`
 
 **BD framing:**
 - Founder-dominated → single decision-maker or small inner circle; deal can close faster; pitch to the MD directly
